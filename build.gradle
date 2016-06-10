@@ -1,0 +1,178 @@
+//------------------------------------------------------
+
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: "eclipse"
+apply plugin: "signing"
+
+//------------------------------------------------------
+
+String nome = "Copaiba"
+String descricao = "Programação em tempo de execução remota."
+
+group = "com.joseflavio"
+archivesBaseName = "copaiba"
+version = "1.0-A1"
+
+//------------------------------------------------------
+
+float javaVersao = 1.6
+String codificacao = "ISO-8859-1"
+
+sourceCompatibility = javaVersao
+compileJava.options.encoding = codificacao
+
+sourceSets {
+    main.java.srcDirs = ["fonte"]
+    main.resources.srcDirs = ["recurso"]
+}
+
+//------------------------------------------------------
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir:"biblioteca", include:["*.jar"])
+    compile "com.joseflavio:urucum:1.0-A1"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.6.4"
+    compile "org.codehaus.groovy:groovy:2.4.5"
+    compile "org.codehaus.groovy:groovy-jsr223:2.4.5"
+    compile "org.python:jython-standalone:2.7.0"
+    compile "junit:junit:4.12"
+}
+
+//------------------------------------------------------
+
+jar {
+
+    manifest {
+        attributes "Implementation-Title": nome,
+                   "Implementation-Version": version,
+                   "Class-Path": configurations.compile.collect{ it.getName() }.join(" ")
+    }
+
+    exclude "com/joseflavio/copaiba/teste/**"
+    exclude "*.jks"
+
+}
+
+//------------------------------------------------------
+
+task jarFonte(type: Jar) {
+    
+    classifier = "sources"
+    from sourceSets.main.allSource
+
+    manifest {
+        attributes "Implementation-Title": nome + " - Codigo Fonte",
+                   "Implementation-Version": version,
+                   "Main-Class": ""
+    }
+
+}
+
+//------------------------------------------------------
+
+task jarDoc(type: Jar) {
+
+    classifier = "javadoc"
+    from javadoc
+
+    javadoc.options.encoding = codificacao
+    javadoc.failOnError = false
+    javadoc.title = nome + " " + version
+    javadoc.options.links = []
+    
+}
+
+//------------------------------------------------------
+
+task jarDep(type: Copy) {
+    into "$buildDir/dependencias"
+    from configurations.compile
+}
+
+build.dependsOn jarDep
+
+//------------------------------------------------------
+
+eclipse {
+    project {
+        name = archivesBaseName
+        comment = descricao
+    }
+    jdt {
+        sourceCompatibility = javaVersao
+        targetCompatibility = javaVersao
+    }
+    classpath {
+        defaultOutputDir = file("binario")
+        file {
+            beforeMerged {
+                classpath -> classpath.entries.removeAll { entry -> entry.kind == "output" }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------
+
+artifacts {
+    archives jarFonte, jarDoc
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication( userName: "xxxxxx", password: "xxxxxx" )
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication( userName: "xxxxxx", password: "xxxxxx" )
+      }
+
+      pom.project {
+
+        name nome
+        packaging "jar"
+        description descricao
+        url "http://www.joseflavio.com/copaiba"
+
+        scm {
+          connection "scm:git:ssh:git@github.com/joseflaviojr/copaiba.git"
+          developerConnection "scm:git:ssh:git@github.com/joseflaviojr/copaiba.git"
+          url "https://github.com/joseflaviojr/copaiba.git"
+        }
+
+        licenses {
+          license {
+            name "GNU Lesser General Public License, Version 3"
+            url "http://www.gnu.org/licenses/lgpl.txt"
+          }
+        }
+
+        developers {
+          developer {
+            id "joseflaviojr"
+            name "José Flávio de Souza Dias Júnior"
+            email "contato@joseflavio.com"
+          }
+        }
+
+      }
+
+    }
+  }
+}
+
+//------------------------------------------------------
