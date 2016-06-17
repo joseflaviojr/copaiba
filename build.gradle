@@ -12,7 +12,7 @@ String descricao = "Programação em tempo de execução remota."
 
 group = "com.joseflavio"
 archivesBaseName = "copaiba"
-version = "1.0-A1"
+version = "1.0-A2"
 
 //------------------------------------------------------
 
@@ -35,11 +35,10 @@ repositories {
 
 dependencies {
     compile fileTree(dir:"biblioteca", include:["*.jar"])
-    compile "com.joseflavio:urucum:1.0-A1"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.6.4"
+    compile "com.joseflavio:urucum:1.0-A2"
     compile "org.codehaus.groovy:groovy:2.4.5"
     compile "org.codehaus.groovy:groovy-jsr223:2.4.5"
-    compile "org.python:jython-standalone:2.7.0"
+    //compile "org.python:jython-standalone:2.7.0"
     compile "junit:junit:4.12"
 }
 
