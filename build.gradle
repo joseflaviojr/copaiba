@@ -16,6 +16,18 @@ version = "1.0-A2"
 
 //------------------------------------------------------
 
+[
+
+"biblioteca",
+"binario",
+"fonte",
+"projeto",
+"recurso"
+
+].each { new File(it).mkdirs() }
+
+//------------------------------------------------------
+
 float javaVersao = 1.6
 String codificacao = "ISO-8859-1"
 
