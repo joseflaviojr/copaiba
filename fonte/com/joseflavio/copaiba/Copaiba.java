@@ -131,6 +131,8 @@ public class Copaiba implements Closeable {
 	
 	private boolean permitirRotina = true;
 	
+	private boolean publicarCertificados = true;
+	
 	private CopaibaRecepcao copaibaRecepcao;
 	
 	static {
@@ -414,6 +416,20 @@ public class Copaiba implements Closeable {
 	public void setPermitirRotina( boolean permitirRotina ) {
 		seguranca( "Copaiba.conf" );
 		this.permitirRotina = permitirRotina;
+	}
+	
+	/**
+	 * @see #setPublicarCertificados(boolean)
+	 */
+	public boolean isPublicarCertificados() {
+		return publicarCertificados;
+	}
+	
+	/**
+	 * Publicar {@link Informacao#getCertificados()}?
+	 */
+	public void setPublicarCertificados( boolean publicarCertificados ) {
+		this.publicarCertificados = publicarCertificados;
 	}
 	
 	public CopaibaRecepcao getCopaibaRecepcao() {
@@ -1010,10 +1026,12 @@ public class Copaiba implements Closeable {
 			tmpSaida = new JSONSaida( tmp );
 			
 			byte[] cert_bytes = null;
-			for( Certificate cert : certificados ){
-				tmpWriter.write( "-----BEGIN CERTIFICATE-----\n" );
-				tmpWriter.write( DatatypeConverter.printBase64Binary( cert.getEncoded() ) );
-				tmpWriter.write( "\n-----END CERTIFICATE-----\n" );
+			if( publicarCertificados ){
+				for( Certificate cert : certificados ){
+					tmpWriter.write( "-----BEGIN CERTIFICATE-----\n" );
+					tmpWriter.write( DatatypeConverter.printBase64Binary( cert.getEncoded() ) );
+					tmpWriter.write( "\n-----END CERTIFICATE-----\n" );
+				}
 			}
 			tmpWriter.flush();
 			cert_bytes = tmp.toByteArray();
@@ -1138,7 +1156,11 @@ public class Copaiba implements Closeable {
 		@Override
 		@SuppressWarnings( "unchecked" )
 		public Collection<Certificate> getCertificados() {
-			return (Collection<Certificate>) certificados.clone();
+			if( publicarCertificados ){
+				return (Collection<Certificate>) certificados.clone();				
+			}else{
+				return Collections.<Certificate>emptySet();
+			}
 		}
 		
 	}

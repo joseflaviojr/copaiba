@@ -6,7 +6,7 @@ Programming in remote runtime.
 
 ## Versão Atual / Current Version
 
-1.0-A3
+1.0-A4
 
 Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
@@ -18,14 +18,14 @@ Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
 Gradle:
 
-    compile 'com.joseflavio:copaiba:1.0-A3'
+    compile 'com.joseflavio:copaiba:1.0-A4'
 
 Maven:
 
     <dependency>
         <groupId>com.joseflavio</groupId>
         <artifactId>copaiba</artifactId>
-        <version>1.0-A3</version>
+        <version>1.0-A4</version>
     </dependency>
 
 ## Desenvolvimento / Development

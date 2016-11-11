@@ -58,7 +58,7 @@ import java.security.Permission;
  * <li>$gerentes@abc.def.Exemplo</li>
  * <li>@abc.def.Exemplo</li>
  * </ul>
- * Em {@link sun.security.provider.PolicyFile PolicyFile}, segue-se os formatos:<br>
+ * Em <code>sun.security.provider.PolicyFile</code>, segue-se os formatos:<br>
  * <ul>
  * <li>permission com.joseflavio.copaiba.CopaibaPermission "usuario@recurso";</li>
  * <li>permission com.joseflavio.copaiba.CopaibaPermission "$grupo@recurso";</li>
