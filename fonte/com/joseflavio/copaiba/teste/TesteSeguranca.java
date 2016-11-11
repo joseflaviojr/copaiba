@@ -73,6 +73,7 @@ final class TesteSeguranca {
 		politica.adicionar( new java.lang.RuntimePermission( "createClassLoader" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "getProtectionDomain" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "loadLibrary.sunec" ) );
+		politica.adicionar( new java.lang.reflect.ReflectPermission( "suppressAccessChecks" ) );
 		politica.adicionar( new java.net.SocketPermission( "", "listen,accept,connect,resolve" ) );
 		politica.adicionar( new java.security.SecurityPermission( "putProviderProperty.SunJCE" ) );
 		politica.adicionar( new java.util.PropertyPermission( "ANTLR_DO_NOT_EXIT", "read" ) );
