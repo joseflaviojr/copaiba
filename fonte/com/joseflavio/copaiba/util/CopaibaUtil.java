@@ -56,8 +56,9 @@ public class CopaibaUtil {
 		
 		ObjectMapper conversor = new ObjectMapper();
 		
-		conversor.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 		conversor.configure( DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true );
+		conversor.configure( DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true );
+		conversor.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 		conversor.configure( DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true );
 		
 		SecurityManager sm = System.getSecurityManager();
