@@ -12,7 +12,9 @@ Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
 ## Requisitos / Requirements
 
+* Git >= 1.8
 * Java >= 1.6
+* Gradle >= 2.0
 
 ## Uso / Use
 
@@ -30,11 +32,12 @@ Maven:
 
 ## Desenvolvimento / Development
 
-Execute o comando a seguir e importe o projeto no Eclipse IDE.
+Configuração do projeto para Eclipse ou IntelliJ IDEA.
 
-Run the following command and import the project in Eclipse IDE.
+Project configuration for Eclipse or IntelliJ IDEA.
 
     gradle eclipse
+    gradle cleanIdea idea
 
 ## Compilação / Compilation
 
