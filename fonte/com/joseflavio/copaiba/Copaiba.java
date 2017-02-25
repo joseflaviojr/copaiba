@@ -39,54 +39,24 @@
 
 package com.joseflavio.copaiba;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.NotSerializableException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Serializable;
-import java.io.Writer;
-import java.lang.reflect.Method;
-import java.security.KeyStore;
-import java.security.Policy;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
-import javax.xml.bind.DatatypeConverter;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joseflavio.copaiba.util.CopaibaUtil;
-import com.joseflavio.copaiba.util.GroovyApenasAuditor;
-import com.joseflavio.copaiba.util.SimplesAutenticador;
-import com.joseflavio.copaiba.util.SimplesFornecedor;
-import com.joseflavio.copaiba.util.TempoLimiteTransformador;
+import com.joseflavio.copaiba.util.*;
 import com.joseflavio.urucum.comunicacao.Consumidor;
 import com.joseflavio.urucum.comunicacao.Notificacao;
 import com.joseflavio.urucum.comunicacao.Servidor;
 import com.joseflavio.urucum.comunicacao.SocketServidor;
+
+import javax.script.*;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.security.KeyStore;
+import java.security.Policy;
+import java.security.cert.Certificate;
+import java.util.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copaíba, do Tupi kupa'iwa.<br>
@@ -129,7 +99,13 @@ public class Copaiba implements Closeable {
 	
 	private ScheduledFuture<?> transferenciaManutencao;
 	
-	private boolean permitirRotina = true;
+	private boolean permitirRotina        = true;
+	private boolean permitirMensagem      = true;
+	private boolean permitirLeitura       = true;
+	private boolean permitirAtribuicao    = true;
+	private boolean permitirRemocao       = true;
+	private boolean permitirSolicitacao   = true;
+	private boolean permitirTransferencia = true;
 	
 	private boolean publicarCertificados = true;
 	
@@ -419,6 +395,103 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
+	 * @see #setPermitirMensagem(boolean)
+	 */
+	public boolean isPermitirMensagem() {
+		return permitirMensagem;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#obter(String, String, boolean, Serializable...)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirMensagem( boolean permitirMensagem ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirMensagem = permitirMensagem;
+	}
+	
+	/**
+	 * @see #setPermitirLeitura(boolean)
+	 */
+	public boolean isPermitirLeitura() {
+		return permitirLeitura;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#obter(String, boolean)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirLeitura( boolean permitirLeitura ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirLeitura = permitirLeitura;
+	}
+	
+	/**
+	 * @see #setPermitirAtribuicao(boolean)
+	 */
+	public boolean isPermitirAtribuicao() {
+		return permitirAtribuicao;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#atribuir(String, Serializable)}
+	 * e {@link CopaibaConexao#atribuir(String, String, String)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirAtribuicao( boolean permitirAtribuicao ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirAtribuicao = permitirAtribuicao;
+	}
+	
+	/**
+	 * @see #setPermitirRemocao(boolean)
+	 */
+	public boolean isPermitirRemocao() {
+		return permitirRemocao;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#remover(String)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirRemocao( boolean permitirRemocao ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirRemocao = permitirRemocao;
+	}
+	
+	/**
+	 * @see #setPermitirSolicitacao(boolean)
+	 */
+	public boolean isPermitirSolicitacao() {
+		return permitirSolicitacao;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#solicitar(String, String, String)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirSolicitacao( boolean permitirSolicitacao ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirSolicitacao = permitirSolicitacao;
+	}
+	
+	/**
+	 * @see #setPermitirTransferencia(boolean)
+	 */
+	public boolean isPermitirTransferencia() {
+		return permitirTransferencia;
+	}
+	
+	/**
+	 * Permitir {@link CopaibaConexao#transferir(Consumidor, UUID, File, Notificacao, Notificacao, Notificacao)}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
+	 */
+	public void setPermitirTransferencia( boolean permitirTransferencia ) {
+		seguranca( "Copaiba.conf" );
+		this.permitirTransferencia = permitirTransferencia;
+	}
+	
+	/**
 	 * @see #setPublicarCertificados(boolean)
 	 */
 	public boolean isPublicarCertificados() {
@@ -427,8 +500,10 @@ public class Copaiba implements Closeable {
 	
 	/**
 	 * Publicar {@link Informacao#getCertificados()}?
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.conf"</code>
 	 */
 	public void setPublicarCertificados( boolean publicarCertificados ) {
+		seguranca( "Copaiba.conf" );
 		this.publicarCertificados = publicarCertificados;
 	}
 	
@@ -667,20 +742,27 @@ public class Copaiba implements Closeable {
 							
 							if( comando == Comando.ROTINA ){
 								
-								String       linguagem   = entrada.texto();
-								String       rotina      = entrada.texto();
-								boolean      imprimir    = entrada.logico();
-								boolean      json        = entrada.inteiro8() == 1;
-								
-								if( linguagem == null ) throw new IllegalArgumentException( "linguagem" );
-								if( rotina == null ) throw new IllegalArgumentException( "rotina" );
-								
-								ScriptEngine processador = getProcessador( linguagem );
+								String  linguagem = entrada.texto();
+								String  rotina    = entrada.texto();
+								boolean imprimir  = entrada.logico();
+								boolean json      = entrada.inteiro8() == 1;
 								
 								if( ! permitirRotina ){
-									enviar( Erro.ROTINA_PERMISSAO, SecurityException.class, "Sem permissão para executar rotinas." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para executar rotinas." );
 									continue;
 								}
+								
+								if( linguagem == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "linguagem" );
+									continue;
+								}
+								
+								if( rotina == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "rotina" );
+									continue;
+								}
+								
+								ScriptEngine processador = getProcessador( linguagem );
 								
 								if( processador == null ){
 									enviar( Erro.LINGUAGEM_DESCONHECIDA, CopaibaException.class, "Linguagem desconhecida." );
@@ -744,9 +826,21 @@ public class Copaiba implements Closeable {
 								String         msg_metodo = entrada.texto();
 								boolean        json       = entrada.inteiro8() == 1;
 								Serializable[] msg_params = (Serializable[]) entrada.objeto();
+								
+								if( ! permitirMensagem ){
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para enviar mensagens para objetos." );
+									continue;
+								}
 
-								if( msg_objeto == null ) throw new IllegalArgumentException( "objeto" );
-								if( msg_metodo == null ) throw new IllegalArgumentException( "metodo" );
+								if( msg_objeto == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "objeto" );
+									continue;
+								}
+								
+								if( msg_metodo == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "metodo" );
+									continue;
+								}
 								
 								Object objeto    = null;
 								Object resultado = null;
@@ -817,7 +911,15 @@ public class Copaiba implements Closeable {
 								boolean json     = entrada.inteiro8() == 1;
 								Object  valor    = null;
 								
-								if( variavel == null ) throw new IllegalArgumentException( "variavel" );
+								if( ! permitirLeitura ){
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para acessar variáveis." );
+									continue;
+								}
+								
+								if( variavel == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "variavel" );
+									continue;
+								}
 
 								try{
 									
@@ -853,18 +955,39 @@ public class Copaiba implements Closeable {
 							}else if( comando == Comando.VARIAVEL_ESCRITA ){
 								
 								String variavel = entrada.texto();
-								if( variavel == null ) throw new IllegalArgumentException( "variavel" );
+								byte   tipo     = entrada.inteiro8();
 								
 								Object objeto = null;
+								String classe = null;
+								String json   = null;
 								
-								if( entrada.inteiro8() == 0 ){
+								if( tipo == 0 ){
 									objeto = entrada.objeto();
 								}else{
-									String classe = entrada.texto();
-									String json   = entrada.texto();
-									if( classe == null ) throw new IllegalArgumentException( "classe" );
+									classe = entrada.texto();
+									json   = entrada.texto();
+								}
+								
+								if( ! permitirAtribuicao ){
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para executar atribuições." );
+									continue;
+								}
+								
+								if( variavel == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "variavel" );
+									continue;
+								}
+								
+								if( tipo == 1 ){
+									
+									if( classe == null ){
+										enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "classe" );
+										continue;
+									}
+									
 									if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
 									objeto = json != null ? conversor.readValue( json, Class.forName( classe ) ) : null;
+									
 								}
 								
 								escopo.put( variavel, objeto );
@@ -874,7 +997,15 @@ public class Copaiba implements Closeable {
 
 								String variavel = entrada.texto();
 								
-								if( variavel == null ) throw new IllegalArgumentException( "variavel" );
+								if( ! permitirRemocao ){
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para executar remoções." );
+									continue;
+								}
+								
+								if( variavel == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "variavel" );
+									continue;
+								}
 								
 								escopo.remove( variavel );
 								saida.comando( Comando.SUCESSO );
@@ -885,9 +1016,25 @@ public class Copaiba implements Closeable {
 								String sol_estado = entrada.texto();
 								String sol_metodo = entrada.texto();
 								
-								if( sol_classe == null ) throw new IllegalArgumentException( "classe" );
-								if( sol_estado == null ) throw new IllegalArgumentException( "estado" );
-								if( sol_metodo == null ) throw new IllegalArgumentException( "metodo" );
+								if( ! permitirSolicitacao ){
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permissão para executar solicitações." );
+									continue;
+								}
+								
+								if( sol_classe == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "classe" );
+									continue;
+								}
+								
+								if( sol_estado == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "estado" );
+									continue;
+								}
+								
+								if( sol_metodo == null ){
+									enviar( Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, "metodo" );
+									continue;
+								}
 								
 								if( auditor != null && ! auditor.aprovar( usuario, sol_classe ) ){
 									enviar( Erro.SOLICITACAO_AUDITORIA, CopaibaException.class, "Classe desaprovada." );
@@ -1183,6 +1330,7 @@ public class Copaiba implements Closeable {
 		
 		@Override
 		public UUID registrarTransferencia( File arquivo, Notificacao<File,?> exito, Notificacao<File,Throwable> erro ) throws CopaibaException {
+			if( ! permitirTransferencia ) throw new SecurityException( "Sem permissão para executar transferências." );
 			if( arquivo == null ) throw new IllegalArgumentException();
 			if( arquivo.length() > 0 ){
 				usuarioAutorizado( "Copaiba.transferencia.leitura" );				

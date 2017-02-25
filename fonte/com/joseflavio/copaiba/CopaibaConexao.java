@@ -39,16 +39,13 @@
 
 package com.joseflavio.copaiba;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.Writer;
+import com.joseflavio.urucum.comunicacao.Consumidor;
+import com.joseflavio.urucum.comunicacao.Notificacao;
+import com.joseflavio.urucum.comunicacao.Servidor;
+import com.joseflavio.urucum.comunicacao.SocketConsumidor;
+
+import javax.script.ScriptEngineManager;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -56,13 +53,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.script.ScriptEngineManager;
-
-import com.joseflavio.urucum.comunicacao.Consumidor;
-import com.joseflavio.urucum.comunicacao.Notificacao;
-import com.joseflavio.urucum.comunicacao.Servidor;
-import com.joseflavio.urucum.comunicacao.SocketConsumidor;
 
 /**
  * Conexão à {@link Copaiba}.
@@ -96,16 +86,21 @@ public class CopaibaConexao implements Closeable {
 			
 			consumidor.setTempoEspera( 3000 );
 			
+			InputStream  is = this.consumidor.getInputStream();
+			OutputStream os = this.consumidor.getOutputStream();
+			
 			switch( modo ){
 				case JAVA:
-					this.consumidor.getOutputStream().write( Comando.INICIO_JAVA.getCodigo() );
-					this.entrada = new JavaEntrada( this.consumidor.getInputStream() );
-					this.saida   = new JavaSaida  ( this.consumidor.getOutputStream() );
+					os.write( Comando.INICIO_JAVA.getCodigo() );
+					os.flush();
+					this.entrada = new JavaEntrada( is );
+					this.saida   = new JavaSaida  ( os );
 					break;
 				case JSON:
-					this.consumidor.getOutputStream().write( Comando.INICIO_JSON.getCodigo() );
-					this.entrada = new JSONEntrada( this.consumidor.getInputStream() );
-					this.saida   = new JSONSaida  ( this.consumidor.getOutputStream() );
+					os.write( Comando.INICIO_JSON.getCodigo() );
+					os.flush();
+					this.entrada = new JSONEntrada( is );
+					this.saida   = new JSONSaida  ( os );
 					break;
 			}
 			
@@ -187,10 +182,14 @@ public class CopaibaConexao implements Closeable {
 			
 			consumidor.setTempoEspera( 3000 );
 			
-			consumidor.getOutputStream().write( Comando.INICIO_INFORMACAO.getCodigo() );
+			InputStream  is = consumidor.getInputStream();
+			OutputStream os = consumidor.getOutputStream();
 			
-			JSONEntrada entrada = new JSONEntrada( consumidor.getInputStream() );
-			JSONSaida   saida   = new JSONSaida  ( consumidor.getOutputStream() );
+			os.write( Comando.INICIO_INFORMACAO.getCodigo() );
+			os.flush();
+			
+			JSONEntrada entrada = new JSONEntrada( is );
+			JSONSaida   saida   = new JSONSaida  ( os );
 			
 			Comando comando = entrada.comando();
 			
@@ -298,6 +297,7 @@ public class CopaibaConexao implements Closeable {
 				
 				tos.write( Comando.INICIO_ARQUIVO_ESCRITA.getCodigo() );
 				tos.texto( registro.toString() );
+				
 				tos.inteiro64( tamanho );
 				
 				fis = new FileInputStream( arquivo );
@@ -313,12 +313,15 @@ public class CopaibaConexao implements Closeable {
 					}
 				}
 				
+				tos.flush();
 				tis.logico();
 				
 			}else{
 				
 				tos.write( Comando.INICIO_ARQUIVO_LEITURA.getCodigo() );
 				tos.texto( registro.toString() );
+				tos.flush();
+				
 				tamanho = tis.inteiro64();
 				
 				fos = new FileOutputStream( arquivo );
@@ -335,6 +338,7 @@ public class CopaibaConexao implements Closeable {
 				}
 				
 				tos.logico( true );
+				tos.flush();
 				
 			}
 			

@@ -6,28 +6,28 @@ Programming in remote runtime.
 
 ## Versão Atual / Current Version
 
-1.0-A6
+1.0-A7
 
 Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
 ## Requisitos / Requirements
 
 * Git >= 1.8
-* Java >= 1.6
+* Java >= 1.8
 * Gradle >= 2.0
 
 ## Uso / Use
 
 Gradle:
 
-    compile 'com.joseflavio:copaiba:1.0-A6'
+    compile 'com.joseflavio:copaiba:1.0-A7'
 
 Maven:
 
     <dependency>
         <groupId>com.joseflavio</groupId>
         <artifactId>copaiba</artifactId>
-        <version>1.0-A6</version>
+        <version>1.0-A7</version>
     </dependency>
 
 ## Desenvolvimento / Development
