@@ -56,8 +56,8 @@ repositories {
 dependencies {
     compile fileTree(dir:"biblioteca", include:["*.jar"])
     compile "com.joseflavio:urucum:1.0-A7"
-    compile "org.codehaus.groovy:groovy:2.4.7"
-    compile "org.codehaus.groovy:groovy-jsr223:2.4.7"
+    compile "org.codehaus.groovy:groovy:2.4.10"
+    compile "org.codehaus.groovy:groovy-jsr223:2.4.10"
     //compile "org.python:jython-standalone:2.7.0"
     compile "junit:junit:4.12"
 }
