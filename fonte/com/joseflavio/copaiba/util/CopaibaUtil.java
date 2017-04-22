@@ -39,12 +39,9 @@
 
 package com.joseflavio.copaiba.util;
 
-import java.lang.reflect.ReflectPermission;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joseflavio.copaiba.Copaiba;
+import com.joseflavio.urucum.json.JSONUtil;
 
 /**
  * Utilitários relacionados à {@link Copaiba}.
@@ -52,26 +49,11 @@ import com.joseflavio.copaiba.Copaiba;
  */
 public class CopaibaUtil {
 	
+	/**
+	 * @deprecated Utilizar {@link JSONUtil#novoConversor()}
+	 */
 	public static ObjectMapper novoConversorJSON() {
-		
-		ObjectMapper conversor = new ObjectMapper();
-		
-		conversor.configure( DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true );
-		conversor.configure( DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true );
-		conversor.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
-		conversor.configure( DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true );
-		
-		SecurityManager sm = System.getSecurityManager();
-		if( sm != null ){
-			try{
-				sm.checkPermission( new ReflectPermission( "suppressAccessChecks" ) );
-			}catch( Exception e ){
-				conversor.disable( MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS );
-			}
-		}
-		
-		return conversor;
-		
+		return JSONUtil.novoConversor();
 	}
 	
 }

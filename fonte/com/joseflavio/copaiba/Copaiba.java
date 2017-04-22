@@ -40,11 +40,15 @@
 package com.joseflavio.copaiba;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joseflavio.copaiba.util.*;
+import com.joseflavio.copaiba.util.GroovyApenasAuditor;
+import com.joseflavio.copaiba.util.SimplesAutenticador;
+import com.joseflavio.copaiba.util.SimplesFornecedor;
+import com.joseflavio.copaiba.util.TempoLimiteTransformador;
 import com.joseflavio.urucum.comunicacao.Consumidor;
 import com.joseflavio.urucum.comunicacao.Notificacao;
 import com.joseflavio.urucum.comunicacao.Servidor;
 import com.joseflavio.urucum.comunicacao.SocketServidor;
+import com.joseflavio.urucum.json.JSONUtil;
 
 import javax.script.*;
 import javax.xml.bind.DatatypeConverter;
@@ -796,7 +800,7 @@ public class Copaiba implements Closeable {
 									}
 									
 									if( json ){
-										if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
+										if( conversor == null ) conversor = JSONUtil.novoConversor();
 										resultado = conversor.writeValueAsString( resultado );
 									}
 									
@@ -893,7 +897,7 @@ public class Copaiba implements Closeable {
 								}
 								
 								if( json ){
-									if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
+									if( conversor == null ) conversor = JSONUtil.novoConversor();
 									resultado = conversor.writeValueAsString( resultado );
 								}
 								
@@ -940,7 +944,7 @@ public class Copaiba implements Closeable {
 								}
 								
 								if( json ){
-									if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
+									if( conversor == null ) conversor = JSONUtil.novoConversor();
 									valor = conversor.writeValueAsString( valor );
 								}
 								
@@ -985,7 +989,7 @@ public class Copaiba implements Closeable {
 										continue;
 									}
 									
-									if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
+									if( conversor == null ) conversor = JSONUtil.novoConversor();
 									objeto = json != null ? conversor.readValue( json, Class.forName( classe ) ) : null;
 									
 								}
@@ -1041,7 +1045,7 @@ public class Copaiba implements Closeable {
 									continue;
 								}
 								
-								if( conversor == null ) conversor = CopaibaUtil.novoConversorJSON();
+								if( conversor == null ) conversor = JSONUtil.novoConversor();
 								
 								Class<?> classe    = Class.forName( sol_classe );
 								Object   objeto    = conversor.readValue( sol_estado, classe );

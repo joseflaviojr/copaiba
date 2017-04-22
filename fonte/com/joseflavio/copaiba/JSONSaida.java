@@ -53,6 +53,7 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joseflavio.copaiba.JSONEntrada.JSONBinario;
 import com.joseflavio.copaiba.util.CopaibaUtil;
+import com.joseflavio.urucum.json.JSONUtil;
 
 /**
  * {@link Saida} baseada em {@link ObjectMapper}.
@@ -66,7 +67,7 @@ class JSONSaida implements Saida {
 	
 	public JSONSaida( OutputStream os ) throws IOException {
 		this.saida = new BufferedWriter( new OutputStreamWriter( os, "UTF-8" ) );
-		this.conversor = CopaibaUtil.novoConversorJSON();
+		this.conversor = JSONUtil.novoConversor();
 	}
 	
 	private void texto( char[] o, boolean aspas ) throws IOException {

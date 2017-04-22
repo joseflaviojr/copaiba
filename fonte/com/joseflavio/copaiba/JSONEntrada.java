@@ -39,20 +39,15 @@
 
 package com.joseflavio.copaiba;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joseflavio.urucum.json.JSONUtil;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joseflavio.copaiba.util.CopaibaUtil;
 
 /**
  * {@link Entrada} baseada em {@link ObjectMapper}.
@@ -68,7 +63,7 @@ class JSONEntrada implements Entrada {
 	
 	public JSONEntrada( InputStream is ) throws IOException {
 		this.entrada = new BufferedReader( new InputStreamReader( is, "UTF-8" ) );
-		this.conversor = CopaibaUtil.novoConversorJSON();
+		this.conversor = JSONUtil.novoConversor();
 	}
 	
 	private StringBuilder proximo() throws IOException {
