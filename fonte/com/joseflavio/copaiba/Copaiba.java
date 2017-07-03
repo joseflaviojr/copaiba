@@ -1047,10 +1047,17 @@ public class Copaiba implements Closeable {
 								
 								if( conversor == null ) conversor = JSONUtil.novoConversor();
 								
-								Class<?> classe    = Class.forName( sol_classe );
-								Object   objeto    = conversor.readValue( sol_estado, classe );
-								Method   metodo    = classe.getMethod( sol_metodo );
-								String   resultado = conversor.writeValueAsString( metodo.invoke( objeto ) );
+								Class<?> classe = Class.forName( sol_classe );
+								Object   objeto = conversor.readValue( sol_estado, classe );
+								Method   metodo = classe.getMethod( sol_metodo );
+								
+								try{
+									Method setCopaibaEstado = classe.getMethod( "set$CopaibaEstado", String.class );
+									setCopaibaEstado.invoke( objeto, sol_estado );
+								}catch( Exception e ){
+								}
+								
+								String resultado = conversor.writeValueAsString( metodo.invoke( objeto ) );
 								
 								saida.comando( Comando.SUCESSO );
 								saida.texto( resultado );
