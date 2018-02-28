@@ -1,5 +1,5 @@
 
-# .gitignore 2017-05-25
+# .gitignore universal 1.0
 
 # Sistema Operacional
 .DS_Store*
@@ -35,6 +35,9 @@ build/
 target/
 test-output/
 
+# Visual Studio Code
+.vscode/
+
 # Eclipse
 .project
 .classpath
@@ -49,7 +52,10 @@ out/
 
 # SASS
 .sass-cache/
-*.css.map
+
+# Jekyll
+_site
+.jekyll-metadata
 
 # C/C++
 *.slo

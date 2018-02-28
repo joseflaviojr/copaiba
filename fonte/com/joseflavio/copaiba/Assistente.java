@@ -1,6 +1,6 @@
 
 /*
- *  Copyright (C) 2016 José Flávio de Souza Dias Júnior
+ *  Copyright (C) 2016-2018 José Flávio de Souza Dias Júnior
  *  
  *  This file is part of Copaíba - <http://www.joseflavio.com/copaiba/>.
  *  
@@ -19,7 +19,7 @@
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016 José Flávio de Souza Dias Júnior
+ *  Direitos Autorais Reservados (C) 2016-2018 José Flávio de Souza Dias Júnior
  * 
  *  Este arquivo é parte de Copaíba - <http://www.joseflavio.com/copaiba/>.
  * 
