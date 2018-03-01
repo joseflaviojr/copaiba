@@ -145,7 +145,7 @@ uploadArchives {
         name nome
         packaging "jar"
         description descricao
-        url "http://www.joseflavio.com/copaiba"
+        url "http://joseflavio.com/copaiba"
 
         scm {
           connection "scm:git:ssh:git@github.com/joseflaviojr/copaiba.git"
