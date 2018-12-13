@@ -14,18 +14,18 @@ A figura a seguir ilustra o esquema geral da arquitetura Copaíba:
 
 ## Versão Atual
 
-1.0-A12
+1.0-A13
 
 Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
 ## Como Usar
 
-A Copaíba está disponível como biblioteca Java no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A12%7Cjar).
+A Copaíba está disponível como biblioteca Java no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A13%7Cjar).
 
 Gradle:
 
 ```
-compile 'com.joseflavio:copaiba:1.0-A12'
+compile 'com.joseflavio:copaiba:1.0-A13'
 ```
 
 Maven:
@@ -34,7 +34,7 @@ Maven:
 <dependency>
     <groupId>com.joseflavio</groupId>
     <artifactId>copaiba</artifactId>
-    <version>1.0-A12</version>
+    <version>1.0-A13</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ gradle cleanIdea idea
 
 * Git >= 2.8
 * Java >= 1.8
-* Gradle >= 3.1
+* Gradle >= 4.7
 
 ### Testes
 
@@ -77,7 +77,7 @@ gradle clean build
 
 ## Publicação
 
-Para compilar e publicar os arquivos finais do projeto no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A12%7Cjar), executar no terminal:
+Para compilar e publicar os arquivos finais do projeto no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A13%7Cjar), executar no terminal:
 
 ```sh
 gradle clean uploadArchives

@@ -51,7 +51,6 @@ import com.joseflavio.urucum.comunicacao.SocketServidor;
 import com.joseflavio.urucum.json.JSONUtil;
 
 import javax.script.*;
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.security.KeyStore;
@@ -1187,7 +1186,7 @@ public class Copaiba implements Closeable {
 			if( publicarCertificados ){
 				for( Certificate cert : certificados ){
 					tmpWriter.write( "-----BEGIN CERTIFICATE-----\n" );
-					tmpWriter.write( DatatypeConverter.printBase64Binary( cert.getEncoded() ) );
+					tmpWriter.write( Base64.getEncoder().encodeToString( cert.getEncoded() ) );
 					tmpWriter.write( "\n-----END CERTIFICATE-----\n" );
 				}
 			}

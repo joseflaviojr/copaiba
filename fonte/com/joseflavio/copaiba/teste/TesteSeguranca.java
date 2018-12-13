@@ -68,6 +68,7 @@ final class TesteSeguranca {
 		politica.adicionar( new java.io.FilePermission( System.getProperty( "user.home" ) + File.separator + "-", "read, write" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "accessClassInPackage.sun.reflect" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "accessClassInPackage.sun.security.*" ) );
+		politica.adicionar( new java.lang.RuntimePermission( "accessClassInPackage.jdk.internal.reflect" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "accessDeclaredMembers" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "Copaiba.*" ) );
 		politica.adicionar( new java.lang.RuntimePermission( "createClassLoader" ) );
@@ -85,6 +86,8 @@ final class TesteSeguranca {
 		politica.adicionar( new java.util.PropertyPermission( "javax.net.ssl.*", "read" ) );
 		politica.adicionar( new java.util.PropertyPermission( "os.name", "read" ) );
 		politica.adicionar( new java.util.PropertyPermission( "user.home", "read" ) );
+		politica.adicionar( new java.util.PropertyPermission( "com.fasterxml.jackson.core.util.BufferRecyclers.trackReusableBuffers", "read" ) );
+		politica.adicionar( new java.util.PropertyPermission( "idea.test.cyclic.buffer.size", "read" ) );
 		politica.adicionar( new java.util.logging.LoggingPermission( "control", null ) );
 		
 	}
