@@ -40,7 +40,7 @@
 package com.joseflavio.copaiba;
 
 /**
- * Erros possíveis na {@link Copaiba}.
+ * Erros possíveis da {@link Copaiba}.
  * @author José Flávio de Souza Dias Júnior
  */
 public enum Erro {
@@ -49,6 +49,9 @@ public enum Erro {
 	COMANDO_DESCONHECIDO   (  1),
 	LINGUAGEM_DESCONHECIDA (  2),
 	ARGUMENTO_INVALIDO     (  3),
+	ESTADO_INVALIDO        (  4),
+	TAMANHO_EXCEDIDO       (  5),
+	TEMPO_EXCEDIDO         (  6),
 	AUTENTICACAO           (100),
 	FORNECIMENTO           (101),
 	PERMISSAO              (102),

@@ -48,6 +48,7 @@ public interface Auditor {
 
 	/**
 	 * Valida e verifica uma rotina de {@link CopaibaConexao#executar(String, String, java.io.Writer) execução} de um {@link Usuario}.
+	 * @param usuario {@link Usuario} em atuação. null == anônimo.
 	 * @return <code>true</code>, se rotina devidamente aprovada.
 	 * @see CopaibaConexao#executar(String, String, java.io.Writer)
 	 */
@@ -57,7 +58,8 @@ public interface Auditor {
 	 * Aprova ou não a utilização de uma {@link Class classe} pelo {@link Usuario}.<br>
 	 * Recursos sensíveis a esta auditoria:<br>
 	 * {@link CopaibaConexao#solicitar(String, String, String)}
-	 * @param classe {@link Class#getName()}
+	 * @param usuario {@link Usuario} em atuação. null == anônimo.
+	 * @param classe {@link Class#getName()} desejada.
 	 */
 	boolean aprovar( Usuario usuario, String classe ) throws CopaibaException;
 	

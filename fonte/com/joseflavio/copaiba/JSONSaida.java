@@ -52,7 +52,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joseflavio.copaiba.JSONEntrada.JSONBinario;
-import com.joseflavio.copaiba.util.CopaibaUtil;
 import com.joseflavio.urucum.json.JSONUtil;
 
 /**

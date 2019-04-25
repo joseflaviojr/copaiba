@@ -39,26 +39,70 @@
 
 package com.joseflavio.copaiba;
 
-import com.joseflavio.urucum.comunicacao.Consumidor;
-import com.joseflavio.urucum.comunicacao.Notificacao;
-import com.joseflavio.urucum.comunicacao.Servidor;
-import com.joseflavio.urucum.comunicacao.SocketConsumidor;
-
-import javax.script.ScriptEngineManager;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.TrustManagerFactory;
+import javax.script.ScriptEngineManager;
+
+import com.joseflavio.urucum.comunicacao.ComunicacaoUtil;
+import com.joseflavio.urucum.comunicacao.Consumidor;
+import com.joseflavio.urucum.comunicacao.Notificacao;
+import com.joseflavio.urucum.comunicacao.Servidor;
+import com.joseflavio.urucum.comunicacao.SocketConsumidor;
+import com.joseflavio.urucum.json.JSON;
+
+import org.json.JSONException;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 /**
  * Conexão à {@link Copaiba}.
  * @author José Flávio de Souza Dias Júnior
  */
 public class CopaibaConexao implements Closeable {
+
+	private String endereco;
+	
+	private int porta;
+	
+	private boolean segura;
+	
+	private boolean ignorarCertificado;
+
+	private boolean expressa = false;
 	
 	private Consumidor consumidor;
 	
@@ -77,6 +121,57 @@ public class CopaibaConexao implements Closeable {
 	 * @param senha Veja {@link Autenticador#autenticar(String, String)}
 	 */
 	public CopaibaConexao( Consumidor consumidor, Modo modo, String usuario, String senha ) throws RuntimeException, CopaibaException {
+		construir( consumidor, modo, usuario, senha );
+	}
+	
+	/**
+	 * {@link #CopaibaConexao(Consumidor, Modo, String, String) Conexão} em {@link Modo#JAVA}.
+	 */
+	public CopaibaConexao( Consumidor consumidor, String usuario, String senha ) throws CopaibaException {
+		this( consumidor, Modo.JAVA, usuario, senha );
+	}
+	
+	/**
+	 * {@link CopaibaConexao} baseada em {@link SocketConsumidor}.
+	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
+	 */
+	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, Modo modo, String usuario, String senha ) throws CopaibaException {
+		this( novoSocketConsumidor( endereco, porta, segura, ignorarCertificado ), modo, usuario, senha );
+	}
+	
+	/**
+	 * {@link SocketConsumidor} em {@link Modo#JAVA}.
+	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
+	 */
+	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, String usuario, String senha ) throws CopaibaException {
+		this( novoSocketConsumidor( endereco, porta, segura, ignorarCertificado ), Modo.JAVA, usuario, senha );
+	}
+	
+	/**
+	 * {@link SocketConsumidor} (sem TLS/SSL) em {@link Modo#JAVA}.
+	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
+	 */
+	public CopaibaConexao( String endereco, int porta, String usuario, String senha ) throws CopaibaException {
+		this( novoSocketConsumidor( endereco, porta, false, true ), Modo.JAVA, usuario, senha );
+	}
+
+	/**
+	 * Estabelece uma conexão normal ou configura uma conexão expressa para uma {@link Copaiba}.
+	 * Sendo normal, será utilizado um {@link SocketConsumidor} em {@link Modo#JAVA}.
+	 */
+	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, boolean expressa ) throws CopaibaException {
+		if( expressa ){
+			this.endereco = endereco;
+			this.porta = porta;
+			this.segura = segura;
+			this.ignorarCertificado = ignorarCertificado;
+			this.expressa = expressa;
+		}else{
+			construir( novoSocketConsumidor( endereco, porta, segura, ignorarCertificado ), Modo.JAVA, "", "" );
+		}
+	}
+
+	private void construir( Consumidor consumidor, Modo modo, String usuario, String senha ) throws RuntimeException, CopaibaException {
 		
 		try{
 			
@@ -136,38 +231,7 @@ public class CopaibaConexao implements Closeable {
 			}catch( IOException e ){
 			}
 		}
-		
-	}
-	
-	/**
-	 * {@link #CopaibaConexao(Consumidor, Modo, String, String) Conexão} em {@link Modo#JAVA}.
-	 */
-	public CopaibaConexao( Consumidor consumidor, String usuario, String senha ) throws CopaibaException {
-		this( consumidor, Modo.JAVA, usuario, senha );
-	}
-	
-	/**
-	 * {@link CopaibaConexao} baseada em {@link SocketConsumidor}.
-	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
-	 */
-	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, Modo modo, String usuario, String senha ) throws CopaibaException {
-		this( novoSocketConsumidor( endereco, porta, segura, ignorarCertificado ), modo, usuario, senha );
-	}
-	
-	/**
-	 * {@link SocketConsumidor} em {@link Modo#JAVA}.
-	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
-	 */
-	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, String usuario, String senha ) throws CopaibaException {
-		this( novoSocketConsumidor( endereco, porta, segura, ignorarCertificado ), Modo.JAVA, usuario, senha );
-	}
-	
-	/**
-	 * {@link SocketConsumidor} (sem TLS/SSL) em {@link Modo#JAVA}.
-	 * @see #CopaibaConexao(Consumidor, Modo, String, String)
-	 */
-	public CopaibaConexao( String endereco, int porta, String usuario, String senha ) throws CopaibaException {
-		this( novoSocketConsumidor( endereco, porta, false, true ), Modo.JAVA, usuario, senha );
+
 	}
 	
 	/**
@@ -392,14 +456,47 @@ public class CopaibaConexao implements Closeable {
 			throw new CopaibaException( Erro.DESCONHECIDO, e );
 		}
 	}
-	
+
 	private static void dispararErro( Entrada entrada, Saida saida ) throws CopaibaException {
 		
 		try{
-			
-			Erro erro = Erro.getErro( entrada.inteiro32() );
+
+			Erro   erro       = Erro.getErro( entrada.inteiro32() );
 			String classeNome = entrada.texto();
-			String mensagem = entrada.texto();
+			String mensagem   = entrada.texto();
+
+			dispararErro(
+				erro,
+				classeNome,
+				mensagem,
+				() -> {
+					try{
+						saida.comando( Comando.SUCESSO );
+					}catch( Exception e ){
+					}
+				}
+			);
+			
+		}catch( IOException e ) {
+			throw new CopaibaException( Erro.DESCONHECIDO, e );
+		}
+
+	}
+
+	/**
+	 * Reconhece e dispara uma exceção conforme seu {@link Class#getName() endereço} e {@link Throwable#getMessage() mensagem}.
+	 * @param erro Especificação da exceção no contexto da {@link Copaiba}.
+	 * @param classeNome Endereço completo da classe de {@link Throwable exceção}.
+	 * @param mensagem Mensagem de erro. Veja {@link Throwable#getMessage()}.
+	 * @param sucesso Atividade a ser executada quando do reconhecimento positivo da exceção a ser disparada. Pode ser null.
+	 * @throws RuntimeException Classe de exceção que será disparada preferencialmente.
+	 * @throws CopaibaException Classe de exceção secundária, normalmente disparada encapsulando outra exceção.
+	 */
+	private static void dispararErro( Erro erro, String classeNome, String mensagem, Runnable sucesso ) throws RuntimeException, CopaibaException {
+		
+		if( mensagem == null ) mensagem = "";
+
+		try{
 			
 			Class<?> classe = null;
 			try{
@@ -407,10 +504,9 @@ public class CopaibaConexao implements Closeable {
 			}catch( ClassNotFoundException e ){
 				throw new CopaibaException( erro, classeNome + ": " + mensagem );
 			}
-			
-			try{
-				saida.comando( Comando.SUCESSO );
-			}catch( Exception e ){
+
+			if( sucesso != null ){
+				sucesso.run();
 			}
 			
 			if( classe == CopaibaException.class ){
@@ -419,19 +515,19 @@ public class CopaibaConexao implements Closeable {
 				
 			}else{
 				
-				Throwable origem = null;
+				Throwable causa = null;
 				try{
-					origem = (Throwable) classe.getConstructor( String.class ).newInstance( mensagem );
+					causa = (Throwable) classe.getConstructor( String.class ).newInstance( mensagem );
 				}catch( Exception e ){
 					try{
-						origem = (Throwable) classe.newInstance();
+						causa = (Throwable) classe.getConstructor().newInstance();
 					}catch( Exception f ){
-						throw new CopaibaException( erro, mensagem );
+						throw new CopaibaException( erro, classeNome + ": " + mensagem );
 					}
 				}
 				
-				if( RuntimeException.class.isAssignableFrom( classe ) ) throw origem;
-				throw new CopaibaException( erro, origem );
+				if( RuntimeException.class.isAssignableFrom( classe ) ) throw (RuntimeException) causa;
+				else throw new CopaibaException( erro, causa );
 				
 			}
 		
@@ -476,10 +572,15 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized Serializable executar( String linguagem, String rotina, Writer impressao, boolean json ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( linguagem  == null ) throw new IllegalArgumentException( "linguagem" );
 		if( rotina     == null ) throw new IllegalArgumentException( "rotina" );
+
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
 		
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
+
 		try{
 			
 			saida.comando( Comando.ROTINA );
@@ -536,9 +637,14 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized Serializable executar( String linguagem, Reader rotina, Writer impressao ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( linguagem  == null ) throw new IllegalArgumentException( "linguagem" );
 		if( rotina     == null ) throw new IllegalArgumentException( "rotina" );
+		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+		
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -584,9 +690,14 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized Serializable obter( String objeto, String metodo, boolean json, Serializable... parametros ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( objeto     == null ) throw new IllegalArgumentException( "objeto" );
 		if( metodo     == null ) throw new IllegalArgumentException( "metodo" );
+		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+		
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -625,9 +736,14 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized Serializable obter( String variavel, boolean json ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
 		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
+
 		try{
 			
 			saida.comando( Comando.VARIAVEL_LEITURA );
@@ -668,8 +784,13 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized void atribuir( String variavel, Serializable objeto ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
+		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -704,9 +825,14 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized void atribuir( String variavel, String classe, String json ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
 		if( classe     == null ) throw new IllegalArgumentException( "classe" );
+		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+		
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -741,8 +867,13 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized void remover( String variavel ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
+		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+		
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -776,10 +907,15 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized String solicitar( String classe, String estado, String metodo ) throws RuntimeException, CopaibaException {
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		if( classe == null ) throw new IllegalArgumentException( "classe" );
 		if( estado == null ) throw new IllegalArgumentException( "estado" );
 		if( metodo == null ) throw new IllegalArgumentException( "metodo" );
+
+		if( expressa ){
+			return conectarExpressa( "SOLICITAR", classe, metodo, estado );
+		}
+
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
 			
@@ -825,7 +961,8 @@ public class CopaibaConexao implements Closeable {
 	
 	/**
 	 * A {@link CopaibaConexao} está aberta?<br>
-	 * Verifica se o {@link Consumidor} está {@link Consumidor#isAberto() aberto}.
+	 * Verifica se o {@link Consumidor} está {@link Consumidor#isAberto() aberto}.<br>
+	 * Se a conexão for do tipo expressa, sempre retornará false.
 	 */
 	public synchronized boolean isAberta() {
 		return consumidor != null && consumidor.isAberto();
@@ -837,6 +974,10 @@ public class CopaibaConexao implements Closeable {
 	 */
 	public synchronized void verificar() throws RuntimeException, CopaibaException {
 		
+		if( expressa ){
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponível através de conexão expressa." );
+		}
+
 		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conexão fechada." );
 		
 		try{
@@ -863,7 +1004,8 @@ public class CopaibaConexao implements Closeable {
 	
 	/**
 	 * Envia o {@link Comando#FIM} para a {@link Copaiba} e, se obter {@link Comando#SUCESSO},
-	 * {@link Consumidor#fechar() fecha} o {@link Consumidor} e inutiliza esta {@link CopaibaConexao}.
+	 * {@link Consumidor#fechar() fecha} o {@link Consumidor} e inutiliza esta {@link CopaibaConexao}.<br>
+	 * Se a conexão for do tipo expressa, este método nada fará.
 	 * @param garantir Fechar mesmo com negação ou erro da {@link Copaiba}?
 	 * @throws CopaibaException caso ocorra algum erro durante o fechamento não forçado.
 	 * @see Consumidor#fechar()
@@ -890,6 +1032,8 @@ public class CopaibaConexao implements Closeable {
 				throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando desconhecido." );
 			}
 			
+		}catch( RuntimeException e ){
+			if( ! garantir ) throw e;
 		}catch( CopaibaException e ){
 			if( ! garantir ) throw e;
 		}catch( Exception e ){
@@ -922,5 +1066,210 @@ public class CopaibaConexao implements Closeable {
 			throw new IOException( e );
 		}
 	}
+
+	/**
+	 * Efetiva uma conexão expressa enviando a cadeia de comando desejado e
+	 * retornando a resposta final.
+	 */
+	private String conectarExpressa( String... comando ) throws RuntimeException, CopaibaException {
+
+		NioEventLoopGroup grupo = new NioEventLoopGroup( 1 );
+
+		try{
+
+			final TrustManagerFactory tmf =
+				ignorarCertificado ?
+				InsecureTrustManagerFactory.INSTANCE :
+				ComunicacaoUtil.iniciarTrustManagerFactory();
+
+			final SslContext ssl =
+				segura ?
+				SslContextBuilder.forClient().trustManager( tmf ).build() :
+				null;
+
+			Bootstrap servico = new Bootstrap();
+
+			ConexaoExpressa conexaoExpressa = new ConexaoExpressa( comando );
+
+			servico.group( grupo )
+				.channel( NioSocketChannel.class )
+				.option( ChannelOption.SO_KEEPALIVE, true )
+				.handler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					public void initChannel( SocketChannel ch ) throws Exception {
+
+						ChannelPipeline pipeline = ch.pipeline();
+
+						if( ssl != null ){
+							pipeline.addLast( ssl.newHandler( ch.alloc(), endereco, porta ) );
+						}
+
+						pipeline.addLast( conexaoExpressa );
+
+					}
+				});
+			
+			servico.connect( endereco, porta ).sync().channel().closeFuture().sync();
+
+			return conexaoExpressa.esperarResposta();
+
+		}catch( RuntimeException e ){
+			throw e;
+		}catch( CopaibaException e ){
+			throw e;
+		}catch( Exception e ){
+			throw new CopaibaException( Erro.DESCONHECIDO, e );
+		}finally{
+
+			grupo.shutdownGracefully( 0, 0, TimeUnit.MILLISECONDS );
+
+		}
+
+	}
+
+	/**
+	 * Conexão expressa com um servidor {@link Copaiba},
+	 * compreendendo um ciclo completo de vida,
+	 * conexão-requisição-resposta-fechamento.
+	 */
+	private final class ConexaoExpressa extends ChannelInboundHandlerAdapter {
+
+		private String[] comando;
+		private ByteBuf entrada, saida;
+		private Charset codificacao;
+		private JSON erro;
+		private CompletableFuture<String> conclusao = new CompletableFuture<>();
+
+		public ConexaoExpressa( String... comando ) {
+			this.comando = comando;
+		}
+
+		@Override
+		public void handlerAdded( ChannelHandlerContext ctx ) {
+			entrada     = ctx.alloc().buffer( 150 );
+			saida       = ctx.alloc().buffer( 150 );
+			codificacao = Charset.forName( "UTF-8" );
+		}
+
+		@Override
+		public void handlerRemoved( ChannelHandlerContext ctx ) {
+			
+			if( entrada.refCnt() > 0 ) entrada.release( entrada.refCnt() );
+			if( saida  .refCnt() > 0 ) saida  .release( saida  .refCnt() );
+			
+			comando     = null;
+			entrada     = null;
+			saida       = null;
+			codificacao = null;
+
+		}
+
+		@Override
+		public void channelActive( ChannelHandlerContext ctx ) throws Exception {
+
+			final int total  = comando.length;
+			final int ultimo = total - 1;
+
+			for( int i = 0; i < total; i++ ){
+				saida.writeCharSequence( comando[i], codificacao );
+				if( i != ultimo ) saida.writeByte( '\n' );
+			}
+
+			saida.writeBytes( Copaiba.MARCACAO_FIM );
+
+			ctx.writeAndFlush( saida );
+
+		}
+
+		@Override
+		public void channelInactive( ChannelHandlerContext ctx ) throws Exception {
+
+			try{
+
+				if( erro == null && entrada.readableBytes() == 0 ){
+					exceptionCaught( ctx, new IOException( "0 bytes" ) );
+					conclusao.complete( null );
+					return;
+				}
 	
+				String conteudo = entrada.toString( codificacao );
+				String resposta = null;
+	
+				if( conteudo.contains( "_copaiba_erro_codigo" ) ){
+					try{
+						JSON json = new JSON( conteudo );
+						if( json.has( "_copaiba_erro_codigo" ) ) erro = json;
+						else resposta = conteudo;
+					}catch( JSONException e ){
+						resposta = conteudo;	
+					}
+				}else{
+					resposta = conteudo;
+				}
+	
+				conclusao.complete( resposta );
+
+			}catch( Exception e ){
+
+				exceptionCaught( ctx, e );
+				conclusao.complete( null );
+
+			}
+			
+		}
+
+		@Override
+		public void channelRead( ChannelHandlerContext ctx, Object msg ) {
+			ByteBuf bb = (ByteBuf) msg;
+			entrada.writeBytes( bb );
+			bb.release();
+		}
+
+		@Override
+		public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) {
+			
+			Erro motivo =
+				cause instanceof CopaibaException ?
+				((CopaibaException)cause).getErro() :
+				Erro.DESCONHECIDO;
+			
+			if( motivo == null ) motivo = Erro.DESCONHECIDO;
+
+			erro = new JSON()
+				.put( "exito", false )
+				.put( "codigo", motivo.getCodigo() )
+				.put( "_copaiba_erro_codigo", motivo.getCodigo() )
+				.put( "_copaiba_erro_nome", motivo.toString() )
+				.put( "_copaiba_erro_classe", cause.getClass().getName() )
+				.put( "_copaiba_erro_mensagem", cause.getMessage() );
+
+			ctx.close();
+
+		}
+
+		public String esperarResposta() throws CopaibaException {
+			
+			String resposta = null;
+
+			try{
+				resposta = conclusao.get();
+			}catch( Exception e ){
+				throw new CopaibaException( Erro.DESCONHECIDO, e );
+			}
+
+			if( erro != null ){
+				dispararErro(
+					Erro.getErro( erro.getInt( "_copaiba_erro_codigo" ) ),
+					erro.optString( "_copaiba_erro_classe", IOException.class.getName() ),
+					erro.optString( "_copaiba_erro_mensagem", erro.optString( "_copaiba_erro_nome" ) ),
+					null
+				);
+			}
+			
+			return resposta;
+			
+		}
+
+	}
+
 }

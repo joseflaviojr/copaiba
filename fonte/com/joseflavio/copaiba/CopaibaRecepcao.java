@@ -39,16 +39,16 @@
 
 package com.joseflavio.copaiba;
 
-import com.joseflavio.urucum.comunicacao.Servidor;
-
 /**
  * Recepção de eventos de {@link Copaiba}.
+ * 
  * @author José Flávio de Souza Dias Júnior
  */
 public interface CopaibaRecepcao {
 
 	/**
-	 * {@link Copaiba} pronta para {@link Servidor#aceitar() aceitar} {@link CopaibaConexao conexões}.
+	 * {@link Copaiba} pronta para receber {@link CopaibaConexao conexões}.
+	 * Espera-se que o comportamente deste método seja o mais breve possível.
 	 */
 	void pronta( Copaiba copaiba );
 	

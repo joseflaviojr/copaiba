@@ -39,27 +39,74 @@
 
 package com.joseflavio.copaiba;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.NotSerializableException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.Writer;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.security.KeyStore;
+import java.security.Policy;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joseflavio.copaiba.util.GroovyApenasAuditor;
 import com.joseflavio.copaiba.util.SimplesAutenticador;
 import com.joseflavio.copaiba.util.SimplesFornecedor;
 import com.joseflavio.copaiba.util.TempoLimiteTransformador;
+import com.joseflavio.urucum.comunicacao.ComunicacaoUtil;
 import com.joseflavio.urucum.comunicacao.Consumidor;
 import com.joseflavio.urucum.comunicacao.Notificacao;
 import com.joseflavio.urucum.comunicacao.Servidor;
 import com.joseflavio.urucum.comunicacao.SocketServidor;
+import com.joseflavio.urucum.json.JSON;
 import com.joseflavio.urucum.json.JSONUtil;
 
-import javax.script.*;
-import java.io.*;
-import java.lang.reflect.Method;
-import java.security.KeyStore;
-import java.security.Policy;
-import java.security.cert.Certificate;
-import java.util.*;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * Copaíba, do Tupi kupa'iwa.<br>
@@ -76,7 +123,12 @@ public class Copaiba implements Closeable {
 	 */
 	public static final float VERSAO = 1.0f;
 	
-	private static final Map<Thread,Sessao> sessoes;
+	/**
+	 * Caracteres que indicam fim de mensagem.
+	 */
+	public static final byte[] MARCACAO_FIM = { '|', '~', '\r', '\n' };
+
+	private static Map<Thread,Sessao> sessoes;
 	
 	private ScriptEngineManager gerenciador;
 	
@@ -97,6 +149,10 @@ public class Copaiba implements Closeable {
 	private Assistente assistente;
 	
 	private Servidor servidor;
+
+	private EventLoopGroup coordenadores;
+
+	private EventLoopGroup colaboradores;
 	
 	private Map<UUID,Transferencia> transferencia;
 	
@@ -113,62 +169,31 @@ public class Copaiba implements Closeable {
 	private boolean publicarCertificados = true;
 	
 	private CopaibaRecepcao copaibaRecepcao;
-	
-	static {
-		
-		sessoes = Collections.synchronizedMap( new HashMap<Thread,Sessao>( 1000 ) );
-		
-	}
-	
+
 	/**
-	 * {@link Copaiba} completo.
+	 * Instancia uma nova {@link Copaiba}.
 	 * @param autenticador {@link Autenticador}, opcional. Exemplo: {@link SimplesAutenticador}.
 	 * @param transformador {@link Transformador}, opcional. Exemplo: {@link TempoLimiteTransformador}.
 	 * @param auditor {@link Auditor}, opcional. Exemplo: {@link GroovyApenasAuditor}.
 	 * @param fornecedor {@link Fornecedor}, opcional. Exemplo: {@link SimplesFornecedor}.
 	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.criar"</code>
-	 * @see #abrir(Servidor)
+	 * @see #abrir(int, boolean, boolean)
 	 */
 	public Copaiba( Autenticador autenticador, Transformador transformador, Auditor auditor, Fornecedor fornecedor ) {
 		
 		seguranca( "Copaiba.criar" );
 		
-		this.gerenciador   = new ScriptEngineManager();
-		this.linguagens    = new HashSet<String>();
-		this.processadores = new HashMap<String,ScriptEngine>();
-		this.certificados  = new HashSet<Certificate>();
 		this.autenticador  = autenticador;
 		this.transformador = transformador;
 		this.auditor       = auditor;
 		this.fornecedor    = fornecedor;
-		this.transferencia = Collections.synchronizedMap( new HashMap<UUID,Transferencia>( 128 ) );
-		
-		for( ScriptEngineFactory sef : this.gerenciador.getEngineFactories() ){
-			this.linguagens.add( sef.getLanguageName() );
-		}
-		
-		try{
-			String jks = System.getProperty( "javax.net.ssl.keyStore" );
-			File jksArquivo = jks != null ? new File( jks ) : null;
-			if( jksArquivo != null && jksArquivo.exists() ){
-				String jksSenha = System.getProperty( "javax.net.ssl.keyStorePassword" );
-				KeyStore ks = KeyStore.getInstance( KeyStore.getDefaultType() );
-				FileInputStream fis = new FileInputStream( jksArquivo );
-				try{ ks.load( fis, jksSenha.toCharArray() ); }finally{ fis.close(); }
-				Enumeration<String> nomes = ks.aliases();
-				while( nomes.hasMoreElements() ){
-					this.certificados.add( ks.getCertificate( nomes.nextElement() ) );
-				}
-			}
-		}catch( Exception e ){
-		}
-		
+
 	}
 	
 	/**
 	 * {@link Copaiba} inicialmente sem {@link Autenticador}, {@link Transformador} e {@link Auditor}.
 	 * @see SimplesFornecedor
-	 * @see #abrir(Servidor)
+	 * @see #abrir(int, boolean, boolean)
 	 * @see #Copaiba(Autenticador, Transformador, Auditor, Fornecedor)
 	 */
 	public Copaiba( Fornecedor fornecedor ) {
@@ -177,45 +202,70 @@ public class Copaiba implements Closeable {
 	
 	/**
 	 * {@link Copaiba} inicialmente sem {@link Autenticador}, {@link Transformador}, {@link Auditor} e {@link Fornecedor}.
-	 * @see #abrir(Servidor)
+	 * @see #abrir(int, boolean, boolean)
 	 * @see #Copaiba(Autenticador, Transformador, Auditor, Fornecedor)
 	 */
 	public Copaiba() {
 		this( null, null, null, null );
 	}
-	
+
 	/**
-	 * Ativa a recepção de {@link CopaibaConexao conexões}.<br>
-	 * Aconselha-se, antes de chamar este método, proteger as classes e objetos públicos,
+	 * Ativa a recepção de {@link CopaibaConexao conexões}. Aconselha-se,
+	 * antes de chamar este método, proteger as classes e objetos públicos
 	 * através de {@link SecurityManager}. Para mais detalhes, veja {@link Fornecedor}.
-	 * @param servidor Meio de comunicação para receber as {@link CopaibaConexao conexões}.
+	 * @param porta Porta de comunicação por {@link java.net.Socket}.
+	 * @param segura Conexão segura? Proteção através do protocolo TLS/SSL. Veja {@link ComunicacaoUtil#abrirKeyStore()}.
+	 * @param expressa Modo de comunicação expressa? Veja {@link #isExpressa()}.
 	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.abrir"</code>
 	 * @see Autenticador
 	 * @see Auditor
 	 * @see Fornecedor
+	 * @see #isExpressa()
 	 * @see #isAberta()
 	 * @see #fechar()
+	 */
+	public final void abrir( int porta, boolean segura, boolean expressa ) throws CopaibaException {
+		if( expressa ){
+			abrirExpressa( porta, segura );
+		}else{
+			abrir( porta, segura );
+		}
+	}
+
+	/**
+	 * {@link Copaiba} completa disponível através de {@link Servidor}.
+	 * @see #abrir(int, boolean, boolean)
 	 */
 	public final void abrir( Servidor servidor ) throws CopaibaException {
 		
 		seguranca( "Copaiba.abrir" );
+
+		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A Copaíba já está aberta." );
 		
 		if( servidor == null || ! servidor.isAberto() ) throw new IllegalArgumentException( "O servidor deve estar aberto." );
 		
-		this.servidor = servidor;
+		sessoes = Collections.synchronizedMap( new HashMap<Thread,Sessao>() );
+
+		this.servidor      = servidor;
+		this.gerenciador   = new ScriptEngineManager();
+		this.linguagens    = new HashSet<String>();
+		this.processadores = new HashMap<String,ScriptEngine>();
+		this.certificados  = new HashSet<Certificate>();
+		this.transferencia = Collections.synchronizedMap( new HashMap<UUID,Transferencia>( 128 ) );
 		
-		if( copaibaRecepcao != null ){
-			new Thread(){
-				@Override
-				public void run() {
-					try{
-						copaibaRecepcao.pronta( Copaiba.this );
-					}catch( Exception e ){
-					}					
-				}
-			}.start();
+		for( ScriptEngineFactory sef : this.gerenciador.getEngineFactories() ){
+			this.linguagens.add( sef.getLanguageName() );
 		}
 		
+		try{
+			KeyStore ks = ComunicacaoUtil.abrirKeyStore();
+			Enumeration<String> ks_nomes = ks.aliases();
+			while( ks_nomes.hasMoreElements() ){
+				this.certificados.add( ks.getCertificate( ks_nomes.nextElement() ) );
+			}
+		}catch( Exception e ){
+		}
+
 		if( transferenciaManutencao == null || transferenciaManutencao.isDone() ){
 			transferenciaManutencao = new ScheduledThreadPoolExecutor( 1 ).scheduleWithFixedDelay( new Runnable() {
 				@Override
@@ -235,21 +285,30 @@ public class Copaiba implements Closeable {
 				}
 			}, 10, 10, TimeUnit.MINUTES );
 		}
+
+		if( copaibaRecepcao != null ){
+			copaibaRecepcao.pronta( this );
+		}
 		
 		while( true ){
+			if( this.servidor == null ) break;
 			try{
-				Consumidor canal = servidor.aceitar();
-				Sessao sessao = new Sessao( canal );
-				sessao.iniciar();
+				new Sessao( this.servidor.aceitar() ).iniciar();
 			}catch( Exception e ){
+				try{
+					Thread.sleep( 100 );
+				}catch( InterruptedException ie ){
+					throw new CopaibaException( Erro.ESTADO_INVALIDO, ie );
+				}
 			}
 		}
 		
 	}
 	
 	/**
-	 * {@link Copaiba} baseada em {@link SocketServidor}.
+	 * {@link Copaiba} completa disponível através de {@link SocketServidor}.
 	 * @see #abrir(Servidor)
+	 * @see #abrir(int, boolean, boolean)
 	 */
 	public final void abrir( int porta, boolean segura ) throws CopaibaException {
 		try{
@@ -260,8 +319,10 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
-	 * {@link Copaiba} baseada em {@link SocketServidor}, porta 8884 e segurança TLS/SSL desativada.
+	 * {@link Copaiba} completa disponível através de {@link SocketServidor},
+	 * porta 8884 e segurança TLS/SSL desativada.
 	 * @see #abrir(Servidor)
+	 * @see #abrir(int, boolean, boolean)
 	 */
 	public final void abrir() throws CopaibaException {
 		try{
@@ -270,48 +331,174 @@ public class Copaiba implements Closeable {
 			throw new CopaibaException( Erro.DESCONHECIDO, e );
 		}
 	}
-	
-	/**
-	 * A {@link Copaiba} está {@link #abrir(Servidor) aberta}?
-	 * @see #abrir(Servidor)
-	 * @see Servidor#isAberto()
-	 * @see #fechar()
-	 */
-	public final boolean isAberta() {
-		return servidor != null && servidor.isAberto();
+
+	private void abrirExpressa( int porta, boolean segura ) throws CopaibaException {
+
+		seguranca( "Copaiba.abrir" );
+
+		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A Copaíba já está aberta." );
+		
+		try{
+			
+			coordenadores = new NioEventLoopGroup( 1 );
+			colaboradores = new NioEventLoopGroup();
+
+			final SslContext ssl =
+				segura ?
+				SslContextBuilder.forServer( ComunicacaoUtil.iniciarKeyManagerFactory() ).build() :
+				null;
+
+			ServerBootstrap servico = new ServerBootstrap();
+
+			servico.group( coordenadores, colaboradores )
+				.channel( NioServerSocketChannel.class )
+				.childHandler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					public void initChannel( SocketChannel ch ) throws Exception {
+
+						ChannelPipeline pipeline = ch.pipeline();
+						
+						pipeline.addLast(
+							new IdleStateHandler(
+								false,
+								0,
+								SessaoExpressa.TEMPO_MAXIMO,
+								0,
+								TimeUnit.MILLISECONDS
+							)
+						);
+
+						if( ssl != null ){
+							pipeline.addLast( ssl.newHandler( ch.alloc() ) );
+						}
+
+						pipeline.addLast( new SessaoExpressa() );
+
+					}
+				})
+				.option( ChannelOption.SO_BACKLOG, 128 )
+				.childOption( ChannelOption.SO_KEEPALIVE, true );
+
+			if( copaibaRecepcao != null ){
+				copaibaRecepcao.pronta( this );
+			}
+
+			servico.bind( porta ).sync().channel().closeFuture().sync();
+
+		}catch( Exception e ){
+			if( e instanceof CopaibaException ) throw (CopaibaException) e;
+			else if( e instanceof InterruptedException ) throw new CopaibaException( Erro.ESTADO_INVALIDO, e );
+			else throw new CopaibaException( Erro.DESCONHECIDO, e );
+		}
+
 	}
 	
 	/**
-	 * {@link Servidor#fechar() Fecha} o {@link Servidor} e encerra todas as atividades internas, inclusive
-	 * as {@link CopaibaConexao conexões} ativas.<br>
-	 * Contudo, poderá {@link #abrir(Servidor)} novamente.
-	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.fechar"</code>
+	 * A {@link Copaiba} está aberta a conexões de clientes?<br>
+	 * Este método não verifica a efetividade da conexão do servidor.
+	 * @see #abrir(int, boolean, boolean)
 	 * @see #abrir(Servidor)
+	 * @see #fechar()
+	 */
+	public final boolean isAberta() {
+		return coordenadores != null || servidor != null;
+	}
+
+	/**
+	 * Esta {@link Copaiba} está no modo de comunicação expressa?
+	 * A {@link Copaiba} expressa fornece um protocolo assíncrono de comunicação,
+	 * sem manutenção de sessão, com foco em ações simples e rápidas,
+	 * o que impossibilita a utilização de vários recursos da {@link Copaiba}.
+	 * Por enquanto, o modo de comunicação expressa suporta apenas a
+	 * {@link CopaibaConexao#solicitar(String, String, String) solicitação}.
+	 */
+	public final boolean isExpressa() {
+		return coordenadores != null;
+	}
+	
+	/**
+	 * Fecha este servidor e encerra todas as atividades internas, inclusive
+	 * as {@link CopaibaConexao conexões} ativas.<br>
+	 * Contudo, poderá {@link #abrir(int, boolean, boolean) abrir} novamente.
+	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.fechar"</code>
+	 * @see #abrir(int, boolean, boolean)
 	 * @see #isAberta()
 	 */
 	public final void fechar() {
 
 		seguranca( "Copaiba.fechar" );
 		
-		if( servidor == null ) return;
-		
-		if( servidor.isAberto() ){
+		if( sessoes != null ){
+			for( Sessao s : sessoes.values() ){
+				try{
+					s.canal.fechar();
+				}catch( Exception e ){
+				}
+			}
+			sessoes.clear();
+			sessoes = null;
+		}
+
+		if( servidor != null ){
 			try{
 				servidor.fechar();
 			}catch( Exception e ){
+			}finally{
+				servidor = null;
 			}
 		}
-		
-		if( transferenciaManutencao != null && ! transferenciaManutencao.isDone() ){
+
+		if( coordenadores != null ){
 			try{
-				transferenciaManutencao.cancel( true );
+				coordenadores.shutdownGracefully();
 			}catch( Exception e ){
+			}finally{
+				coordenadores = null;
+			}
+		}
+
+		if( colaboradores != null ){
+			try{
+				colaboradores.shutdownGracefully();
+			}catch( Exception e ){
+			}finally{
+				colaboradores = null;
 			}
 		}
 		
-		servidor = null;
-		processadores.clear();
-		transferencia.clear();
+		if( transferenciaManutencao != null ){
+			try{
+				if( ! transferenciaManutencao.isDone() ){
+					transferenciaManutencao.cancel( true );
+				}
+			}catch( Exception e ){
+			}finally{
+				transferenciaManutencao = null;
+			}
+		}
+
+		
+		if( linguagens != null ){
+			linguagens.clear();
+			linguagens = null;
+		}
+
+		if( processadores != null ){
+			processadores.clear();
+			processadores = null;
+		}
+
+		if( certificados != null ){
+			certificados.clear();
+			certificados = null;
+		}
+
+		if( transferencia != null ){
+			transferencia.clear();
+			transferencia = null;
+		}
+		
+		gerenciador = null;
 		
 	}
 	
@@ -544,6 +731,7 @@ public class Copaiba implements Closeable {
 	 * @return <code>null</code>, caso a {@link Thread} não esteja associada a um {@link Usuario}.
 	 */
 	public static final Usuario getUsuario() {
+		if( sessoes == null ) return null;
 		Sessao sessao = sessoes.get( Thread.currentThread() );
 		return sessao != null && sessao.usuario != null ? sessao.usuario.clonar() : null;
 	}
@@ -637,16 +825,16 @@ public class Copaiba implements Closeable {
 	
 	private class Sessao {
 		
-		private Consumidor canal;
-		private InputStream canalE;
+		private Consumidor   canal;
+		private InputStream  canalE;
 		private OutputStream canalS;
 		
 		private Entrada entrada;
-		private Saida saida;
+		private Saida   saida;
 		
 		private TemporariaOutputStream tmp;
-		private Saida tmpSaida;
-		private Writer tmpWriter;
+		private Saida                  tmpSaida;
+		private Writer                 tmpWriter;
 		
 		private Usuario usuario;
 		
@@ -1040,7 +1228,7 @@ public class Copaiba implements Closeable {
 								}
 								
 								if( auditor != null && ! auditor.aprovar( usuario, sol_classe ) ){
-									enviar( Erro.SOLICITACAO_AUDITORIA, CopaibaException.class, "Classe desaprovada." );
+									enviar( Erro.SOLICITACAO_AUDITORIA, SecurityException.class, sol_classe );
 									continue;
 								}
 								
@@ -1055,11 +1243,25 @@ public class Copaiba implements Closeable {
 									setCopaibaEstado.invoke( objeto, sol_estado );
 								}catch( Exception e ){
 								}
-								
-								String resultado = conversor.writeValueAsString( metodo.invoke( objeto ) );
+
+								Object resultadoObj = metodo.invoke( objeto );
+								String resultadoStr = null;
+
+								if( resultadoObj instanceof String ){
+									resultadoStr = (String) resultadoObj;
+									if( resultadoStr.startsWith( "[JSON]~" ) ){
+										resultadoStr = resultadoStr.substring( 7 );
+									}else{
+										resultadoStr = null;
+									}
+								}
+
+								if( resultadoStr == null ){
+									resultadoStr = conversor.writeValueAsString( resultadoObj );
+								}
 								
 								saida.comando( Comando.SUCESSO );
-								saida.texto( resultado );
+								saida.texto( resultadoStr );
 							
 							}else if( comando == Comando.VERIFICACAO ){
 								saida.comando( Comando.SUCESSO );
@@ -1357,6 +1559,198 @@ public class Copaiba implements Closeable {
 			return t.id;
 		}
 		
+	}
+
+	/**
+	 * Processador de requisições expressas.
+	 */
+	private class SessaoExpressa extends ChannelInboundHandlerAdapter {
+
+		private static final long TEMPO_MAXIMO = 20000; // 20 segundos
+		private static final int  CARGA_MAXIMA = 2 * 1024 * 1024; // 2 megabytes
+		
+		private ByteBuf entrada, saida;
+		private Charset codificacao;
+
+		@Override
+		public void handlerAdded( ChannelHandlerContext ctx ) {
+			entrada     = ctx.alloc().buffer( 150 );
+			saida       = ctx.alloc().buffer( 150 );
+			codificacao = Charset.forName( "UTF-8" );
+		}
+
+		@Override
+		public void handlerRemoved( ChannelHandlerContext ctx ) {
+			if( entrada.refCnt() > 0 ) entrada.release( entrada.refCnt() );
+			if( saida  .refCnt() > 0 ) saida  .release( saida  .refCnt() );
+			entrada     = null;
+			saida       = null;
+			codificacao = null;
+		}
+
+		@Override
+		public void userEventTriggered( ChannelHandlerContext ctx, Object evt ) throws Exception {
+			if( evt instanceof IdleStateEvent ){
+				enviarErro( ctx, Erro.TEMPO_EXCEDIDO, null, null );
+			}
+		}
+
+		@Override
+		public void channelRead( ChannelHandlerContext ctx, Object msg ) {
+
+			ByteBuf bb    = (ByteBuf) msg;
+			int     bytes = entrada.readableBytes() + bb.readableBytes();
+
+			try{
+				if( bytes > CARGA_MAXIMA ){
+					enviarErro( ctx, Erro.TAMANHO_EXCEDIDO, null, null );
+					return;
+				}
+				entrada.writeBytes(bb);
+				if( bytes < 4 ) return;
+			}finally{
+				bb.release();
+			}
+
+			int ultimo = entrada.readerIndex() + bytes - 1;
+
+			if( entrada.getByte(ultimo  ) != MARCACAO_FIM[3] ) return;
+			if( entrada.getByte(ultimo-1) != MARCACAO_FIM[2] ) return;
+			if( entrada.getByte(ultimo-2) != MARCACAO_FIM[1] ) return;
+			if( entrada.getByte(ultimo-3) != MARCACAO_FIM[0] ) return;
+
+			entrada.writerIndex( entrada.writerIndex() - 4 );
+
+			String comando = obterLinha();
+			comando = comando != null && comando.length() <= 10 ? comando.toUpperCase() : "";
+
+			if( comando.equals( "SOLICITAR" ) ){
+				comandoSolicitar( ctx );
+			}else{
+				enviarErro( ctx, Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, comando );
+			}
+
+		}
+
+		@Override
+		public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) {
+			enviarErro( ctx, Erro.DESCONHECIDO, cause.getClass(), cause.getMessage() );
+		}
+
+		private String obterLinha() {
+			int bytes = entrada.readableBytes();
+			if( bytes == 0 ) return null;
+			int inicio = entrada.readerIndex();
+			int fim    = inicio + bytes;
+			int n = entrada.indexOf( inicio, fim, (byte) '\n' );
+			if( n == -1 ) return null;
+			if( n == inicio ) return "";
+			int total = n - inicio;
+			boolean retc = entrada.getByte( n - 1 ) == (byte) '\r';
+			if( retc ){
+				total--;
+				if( total == 0 ) return "";
+			}
+			String str = entrada.toString( inicio, total, codificacao );
+			entrada.skipBytes( total + ( retc ? 2 : 1 ) );
+			return str;
+		}
+
+		private void enviarResposta( ChannelHandlerContext ctx, String resposta ) {
+			saida.writeCharSequence( resposta, codificacao );
+			ctx.writeAndFlush( saida ).addListener( ChannelFutureListener.CLOSE );
+		}
+
+		private void enviarErro( ChannelHandlerContext ctx, Erro erro, Class<?> classe, String mensagem ) {
+			
+			if( erro == null ) erro = Erro.DESCONHECIDO;
+
+			JSON json = new JSON()
+				.put( "exito", false )
+				.put( "codigo", erro.getCodigo() )
+				.put( "_copaiba_erro_codigo", erro.getCodigo() )
+				.put( "_copaiba_erro_nome", erro.toString() )
+				.put( "_copaiba_erro_classe", classe != null ? classe.getName() : null )
+				.put( "_copaiba_erro_mensagem", mensagem != null ? mensagem : null );
+			
+			enviarResposta( ctx, json.toString() );
+			
+		}
+
+		private void comandoSolicitar( ChannelHandlerContext ctx ) {
+
+			if( ! permitirSolicitacao ){
+				enviarErro( ctx, Erro.PERMISSAO, SecurityException.class, "Sem permissão para executar solicitações." );
+				return;
+			}
+
+			String sol_classe = obterLinha();
+			String sol_metodo = obterLinha();
+			String sol_estado = entrada.toString(codificacao);
+
+			if( sol_classe == null ){
+				enviarErro( ctx, Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, sol_classe );
+				return;
+			}
+
+			if( sol_metodo == null ){
+				enviarErro( ctx, Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, sol_metodo );
+				return;
+			}
+
+			if( sol_estado == null ){
+				enviarErro( ctx, Erro.ARGUMENTO_INVALIDO, IllegalArgumentException.class, sol_estado );
+				return;
+			}
+
+			try{
+				if( auditor != null && ! auditor.aprovar( null, sol_classe ) ){
+					enviarErro( ctx, Erro.SOLICITACAO_AUDITORIA, SecurityException.class, sol_classe );
+					return;
+				}
+			}catch( Exception e ){
+				enviarErro( ctx, Erro.SOLICITACAO_AUDITORIA, e.getClass(), e.getMessage() );
+				return;
+			}
+
+			try{
+
+				ObjectMapper conversor = JSONUtil.novoConversor();
+				
+				Class<?> classe = Class.forName( sol_classe );
+				Object   objeto = conversor.readValue( sol_estado, classe );
+				Method   metodo = classe.getMethod( sol_metodo );
+				
+				try{
+					Method setCopaibaEstado = classe.getMethod( "set$CopaibaEstado", String.class );
+					setCopaibaEstado.invoke( objeto, sol_estado );
+				}catch( Exception e ){
+				}
+	
+				Object resultadoObj = metodo.invoke( objeto );
+				String resultadoStr = null;
+	
+				if( resultadoObj instanceof String ){
+					resultadoStr = (String) resultadoObj;
+					if( resultadoStr.startsWith( "[JSON]~" ) ){
+						resultadoStr = resultadoStr.substring( 7 );
+					}else{
+						resultadoStr = null;
+					}
+				}
+	
+				if( resultadoStr == null ){
+					resultadoStr = conversor.writeValueAsString( resultadoObj );
+				}
+				
+				enviarResposta( ctx, resultadoStr );
+
+			}catch( Exception e ){
+				enviarErro( ctx, Erro.DESCONHECIDO, e.getClass(), e.getMessage() );
+			}
+
+		}
+
 	}
 	
 }
