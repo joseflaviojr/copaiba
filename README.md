@@ -14,18 +14,18 @@ A figura a seguir ilustra o esquema geral da arquitetura Copaíba:
 
 ## Versão Atual
 
-1.0-A13
+1.0-A14
 
 Padrão de versionamento: [JFV](http://joseflavio.com/jfv)
 
 ## Como Usar
 
-A Copaíba está disponível como biblioteca Java no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A13%7Cjar).
+A Copaíba está disponível como biblioteca Java no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A14%7Cjar).
 
 Gradle:
 
 ```
-compile 'com.joseflavio:copaiba:1.0-A13'
+compile 'com.joseflavio:copaiba:1.0-A14'
 ```
 
 Maven:
@@ -34,7 +34,7 @@ Maven:
 <dependency>
     <groupId>com.joseflavio</groupId>
     <artifactId>copaiba</artifactId>
-    <version>1.0-A13</version>
+    <version>1.0-A14</version>
 </dependency>
 ```
 
@@ -77,7 +77,7 @@ gradle clean build
 
 ## Publicação
 
-Para compilar e publicar os arquivos finais do projeto no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A13%7Cjar), executar no terminal:
+Para compilar e publicar os arquivos finais do projeto no repositório [Maven](http://search.maven.org/#artifactdetails%7Ccom.joseflavio%7Ccopaiba%7C1.0-A14%7Cjar), executar no terminal:
 
 ```sh
 gradle clean uploadArchives
@@ -87,7 +87,7 @@ gradle clean uploadArchives
 
 ### Português
 
-Direitos Autorais Reservados &copy; 2016-2018 [José Flávio de Souza Dias Júnior](http://joseflavio.com)
+Direitos Autorais Reservados &copy; 2016-2019 [José Flávio de Souza Dias Júnior](http://joseflavio.com)
 
 Este arquivo é parte de Copaíba - [http://joseflavio.com/copaiba](http://joseflavio.com/copaiba).
 
@@ -106,7 +106,7 @@ junto com Copaíba. Se não, veja [https://www.gnu.org/licenses/lgpl.html](https
 
 ### English
 
-Copyright &copy; 2016-2018 [José Flávio de Souza Dias Júnior](http://joseflavio.com)
+Copyright &copy; 2016-2019 [José Flávio de Souza Dias Júnior](http://joseflavio.com)
 
 This file is part of Copaíba - [http://joseflavio.com/copaiba](http://joseflavio.com/copaiba).
 

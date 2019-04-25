@@ -13,7 +13,7 @@ String descricao = "Programação em tempo de execução remota."
 
 group = "com.joseflavio"
 archivesBaseName = "copaiba"
-version = "1.0-A13"
+version = "1.0-A14"
 
 //------------------------------------------------------
 
