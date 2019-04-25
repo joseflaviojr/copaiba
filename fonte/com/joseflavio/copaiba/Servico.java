@@ -1,40 +1,40 @@
 
 /*
- *  Copyright (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Copyright (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  *  
- *  This file is part of CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  This file is part of Copa√≠ba - <http://joseflavio.com/copaiba/>.
  *  
- *  CopaÌba is free software: you can redistribute it and/or modify
+ *  Copa√≠ba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  
- *  CopaÌba is distributed in the hope that it will be useful,
+ *  Copa√≠ba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Lesser General Public License for more details.
  *  
  *  You should have received a copy of the GNU Lesser General Public License
- *  along with CopaÌba. If not, see <http://www.gnu.org/licenses/>.
+ *  along with Copa√≠ba. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Direitos Autorais Reservados (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  * 
- *  Este arquivo È parte de CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  Este arquivo √© parte de Copa√≠ba - <http://joseflavio.com/copaiba/>.
  * 
- *  CopaÌba È software livre: vocÍ pode redistribuÌ-lo e/ou modific·-lo
- *  sob os termos da LicenÁa P˙blica Menos Geral GNU conforme publicada pela
- *  Free Software Foundation, tanto a vers„o 3 da LicenÁa, como
- *  (a seu critÈrio) qualquer vers„o posterior.
+ *  Copa√≠ba √© software livre: voc√™ pode redistribu√≠-lo e/ou modific√°-lo
+ *  sob os termos da Licen√ßa P√∫blica Menos Geral GNU conforme publicada pela
+ *  Free Software Foundation, tanto a vers√£o 3 da Licen√ßa, como
+ *  (a seu crit√©rio) qualquer vers√£o posterior.
  * 
- *  CopaÌba È distribuÌdo na expectativa de que seja ˙til,
- *  porÈm, SEM NENHUMA GARANTIA; nem mesmo a garantia implÌcita de
- *  COMERCIABILIDADE ou ADEQUA«√O A UMA FINALIDADE ESPECÕFICA. Consulte a
- *  LicenÁa P˙blica Menos Geral do GNU para mais detalhes.
+ *  Copa√≠ba √© distribu√≠do na expectativa de que seja √∫til,
+ *  por√©m, SEM NENHUMA GARANTIA; nem mesmo a garantia impl√≠cita de
+ *  COMERCIABILIDADE ou ADEQUA√á√ÉO A UMA FINALIDADE ESPEC√çFICA. Consulte a
+ *  Licen√ßa P√∫blica Menos Geral do GNU para mais detalhes.
  * 
- *  VocÍ deve ter recebido uma cÛpia da LicenÁa P˙blica Menos Geral do GNU
- *  junto com CopaÌba. Se n„o, veja <http://www.gnu.org/licenses/>.
+ *  Voc√™ deve ter recebido uma c√≥pia da Licen√ßa P√∫blica Menos Geral do GNU
+ *  junto com Copa√≠ba. Se n√£o, veja <http://www.gnu.org/licenses/>.
  */
 
 package com.joseflavio.copaiba;
@@ -45,17 +45,17 @@ import java.util.UUID;
 import com.joseflavio.urucum.comunicacao.Notificacao;
 
 /**
- * ServiÁos especiais da {@link Copaiba}.
- * @author JosÈ Fl·vio de Souza Dias J˙nior
+ * Servi√ßos especiais da {@link Copaiba}.
+ * @author Jos√© Fl√°vio de Souza Dias J√∫nior
  */
 public interface Servico {
 	
 	/**
-	 * Registra um {@link File arquivo} para transferÍncia atravÈs de exclusiva {@link CopaibaConexao}.
-	 * @param arquivo {@link File Arquivo} de escrita (upload) ou de leitura (download, se {@link File#length() tamanho} > 0).
-	 * @param exito {@link Notificacao} executada apÛs a conclus„o efetiva da transferÍncia. Opcional.
-	 * @param erro {@link Notificacao} executada apÛs algum impeditivo da transferÍncia. Opcional.
-	 * @return {@link UUID} da transferÍncia a ser realizada.
+	 * Registra um {@link File arquivo} para transfer√™ncia atrav√©s de exclusiva {@link CopaibaConexao}.
+	 * @param arquivo {@link File Arquivo} de escrita (upload) ou de leitura (download, se {@link File#length() tamanho} &gt; 0).
+	 * @param exito {@link Notificacao} executada ap√≥s a conclus√£o efetiva da transfer√™ncia. Opcional.
+	 * @param erro {@link Notificacao} executada ap√≥s algum impeditivo da transfer√™ncia. Opcional.
+	 * @return {@link UUID} da transfer√™ncia a ser realizada.
 	 * @throws SecurityException {@link Copaiba#usuarioAutorizado(String)} para <code>"Copaiba.transferencia.escrita"</code> ou <code>"Copaiba.transferencia.leitura"</code>
 	 */
 	UUID registrarTransferencia( File arquivo, Notificacao<File,?> exito, Notificacao<File,Throwable> erro ) throws CopaibaException;

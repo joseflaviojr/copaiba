@@ -1,40 +1,40 @@
 
 /*
- *  Copyright (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Copyright (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  *  
- *  This file is part of CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  This file is part of Copa√≠ba - <http://joseflavio.com/copaiba/>.
  *  
- *  CopaÌba is free software: you can redistribute it and/or modify
+ *  Copa√≠ba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  
- *  CopaÌba is distributed in the hope that it will be useful,
+ *  Copa√≠ba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Lesser General Public License for more details.
  *  
  *  You should have received a copy of the GNU Lesser General Public License
- *  along with CopaÌba. If not, see <http://www.gnu.org/licenses/>.
+ *  along with Copa√≠ba. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Direitos Autorais Reservados (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  * 
- *  Este arquivo È parte de CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  Este arquivo √© parte de Copa√≠ba - <http://joseflavio.com/copaiba/>.
  * 
- *  CopaÌba È software livre: vocÍ pode redistribuÌ-lo e/ou modific·-lo
- *  sob os termos da LicenÁa P˙blica Menos Geral GNU conforme publicada pela
- *  Free Software Foundation, tanto a vers„o 3 da LicenÁa, como
- *  (a seu critÈrio) qualquer vers„o posterior.
+ *  Copa√≠ba √© software livre: voc√™ pode redistribu√≠-lo e/ou modific√°-lo
+ *  sob os termos da Licen√ßa P√∫blica Menos Geral GNU conforme publicada pela
+ *  Free Software Foundation, tanto a vers√£o 3 da Licen√ßa, como
+ *  (a seu crit√©rio) qualquer vers√£o posterior.
  * 
- *  CopaÌba È distribuÌdo na expectativa de que seja ˙til,
- *  porÈm, SEM NENHUMA GARANTIA; nem mesmo a garantia implÌcita de
- *  COMERCIABILIDADE ou ADEQUA«√O A UMA FINALIDADE ESPECÕFICA. Consulte a
- *  LicenÁa P˙blica Menos Geral do GNU para mais detalhes.
+ *  Copa√≠ba √© distribu√≠do na expectativa de que seja √∫til,
+ *  por√©m, SEM NENHUMA GARANTIA; nem mesmo a garantia impl√≠cita de
+ *  COMERCIABILIDADE ou ADEQUA√á√ÉO A UMA FINALIDADE ESPEC√çFICA. Consulte a
+ *  Licen√ßa P√∫blica Menos Geral do GNU para mais detalhes.
  * 
- *  VocÍ deve ter recebido uma cÛpia da LicenÁa P˙blica Menos Geral do GNU
- *  junto com CopaÌba. Se n„o, veja <http://www.gnu.org/licenses/>.
+ *  Voc√™ deve ter recebido uma c√≥pia da Licen√ßa P√∫blica Menos Geral do GNU
+ *  junto com Copa√≠ba. Se n√£o, veja <http://www.gnu.org/licenses/>.
  */
 
 package com.joseflavio.copaiba.util;
@@ -48,19 +48,19 @@ import com.joseflavio.copaiba.Usuario;
 import groovy.transform.TimedInterrupt;
 
 /**
- * {@link Transformador} que tenta limitar o tempo de execuÁ„o de uma {@link CopaibaConexao#executar(String, String, java.io.Writer) rotina},
- * atravÈs de tÈcnica especÌfica e otimizada da linguagem em quest„o.<br>
- * A limitaÁ„o de tempo n„o È garantida, principalmente quando se utiliza instruÁıes bloqueantes, como as de entrada/saÌda.<br>
- * Algumas linguagens n„o possuem limitadores temporais.<br>
- * Rotinas em Groovy ser„o ajustadas com {@link TimedInterrupt}.
- * @author JosÈ Fl·vio de Souza Dias J˙nior
+ * {@link Transformador} que tenta limitar o tempo de execu√ß√£o de uma {@link CopaibaConexao#executar(String, String, java.io.Writer) rotina},
+ * atrav√©s de t√©cnica espec√≠fica e otimizada da linguagem em quest√£o.<br>
+ * A limita√ß√£o de tempo n√£o √© garantida, principalmente quando se utiliza instru√ß√µes bloqueantes, como as de entrada/sa√≠da.<br>
+ * Algumas linguagens n√£o possuem limitadores temporais.<br>
+ * Rotinas em Groovy ser√£o ajustadas com {@link TimedInterrupt}.
+ * @author Jos√© Fl√°vio de Souza Dias J√∫nior
  */
 public class TempoLimiteTransformador implements Transformador {
 	
 	private int tempoLimite;
 	
 	/**
-	 * @param tempoLimite Tempo limite de execuÁ„o desejado, em segundos.
+	 * @param tempoLimite Tempo limite de execu√ß√£o desejado, em segundos.
 	 */
 	public TempoLimiteTransformador( int tempoLimite ) {
 		this.tempoLimite = tempoLimite;

@@ -1,40 +1,40 @@
 
 /*
- *  Copyright (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Copyright (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  *  
- *  This file is part of CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  This file is part of Copa√≠ba - <http://joseflavio.com/copaiba/>.
  *  
- *  CopaÌba is free software: you can redistribute it and/or modify
+ *  Copa√≠ba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  
- *  CopaÌba is distributed in the hope that it will be useful,
+ *  Copa√≠ba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Lesser General Public License for more details.
  *  
  *  You should have received a copy of the GNU Lesser General Public License
- *  along with CopaÌba. If not, see <http://www.gnu.org/licenses/>.
+ *  along with Copa√≠ba. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Direitos Autorais Reservados (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  * 
- *  Este arquivo È parte de CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  Este arquivo √© parte de Copa√≠ba - <http://joseflavio.com/copaiba/>.
  * 
- *  CopaÌba È software livre: vocÍ pode redistribuÌ-lo e/ou modific·-lo
- *  sob os termos da LicenÁa P˙blica Menos Geral GNU conforme publicada pela
- *  Free Software Foundation, tanto a vers„o 3 da LicenÁa, como
- *  (a seu critÈrio) qualquer vers„o posterior.
+ *  Copa√≠ba √© software livre: voc√™ pode redistribu√≠-lo e/ou modific√°-lo
+ *  sob os termos da Licen√ßa P√∫blica Menos Geral GNU conforme publicada pela
+ *  Free Software Foundation, tanto a vers√£o 3 da Licen√ßa, como
+ *  (a seu crit√©rio) qualquer vers√£o posterior.
  * 
- *  CopaÌba È distribuÌdo na expectativa de que seja ˙til,
- *  porÈm, SEM NENHUMA GARANTIA; nem mesmo a garantia implÌcita de
- *  COMERCIABILIDADE ou ADEQUA«√O A UMA FINALIDADE ESPECÕFICA. Consulte a
- *  LicenÁa P˙blica Menos Geral do GNU para mais detalhes.
+ *  Copa√≠ba √© distribu√≠do na expectativa de que seja √∫til,
+ *  por√©m, SEM NENHUMA GARANTIA; nem mesmo a garantia impl√≠cita de
+ *  COMERCIABILIDADE ou ADEQUA√á√ÉO A UMA FINALIDADE ESPEC√çFICA. Consulte a
+ *  Licen√ßa P√∫blica Menos Geral do GNU para mais detalhes.
  * 
- *  VocÍ deve ter recebido uma cÛpia da LicenÁa P˙blica Menos Geral do GNU
- *  junto com CopaÌba. Se n„o, veja <http://www.gnu.org/licenses/>.
+ *  Voc√™ deve ter recebido uma c√≥pia da Licen√ßa P√∫blica Menos Geral do GNU
+ *  junto com Copa√≠ba. Se n√£o, veja <http://www.gnu.org/licenses/>.
  */
 
 package com.joseflavio.copaiba;
@@ -109,9 +109,9 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
 /**
- * CopaÌba, do Tupi kupa'iwa.<br>
- * ProgramaÁ„o em tempo de execuÁ„o remota.
- * @author JosÈ Fl·vio de Souza Dias J˙nior
+ * Copa√≠ba, do Tupi kupa'iwa.<br>
+ * Programa√ß√£o em tempo de execu√ß√£o remota.
+ * @author Jos√© Fl√°vio de Souza Dias J√∫nior
  * @see Autenticador
  * @see Auditor
  * @see Fornecedor
@@ -119,7 +119,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class Copaiba implements Closeable {
 	
 	/**
-	 * Vers„o desta {@link Copaiba}.
+	 * Vers√£o desta {@link Copaiba}.
 	 */
 	public static final float VERSAO = 1.0f;
 	
@@ -210,12 +210,12 @@ public class Copaiba implements Closeable {
 	}
 
 	/**
-	 * Ativa a recepÁ„o de {@link CopaibaConexao conexıes}. Aconselha-se,
-	 * antes de chamar este mÈtodo, proteger as classes e objetos p˙blicos
-	 * atravÈs de {@link SecurityManager}. Para mais detalhes, veja {@link Fornecedor}.
-	 * @param porta Porta de comunicaÁ„o por {@link java.net.Socket}.
-	 * @param segura Conex„o segura? ProteÁ„o atravÈs do protocolo TLS/SSL. Veja {@link ComunicacaoUtil#abrirKeyStore()}.
-	 * @param expressa Modo de comunicaÁ„o expressa? Veja {@link #isExpressa()}.
+	 * Ativa a recep√ß√£o de {@link CopaibaConexao conex√µes}. Aconselha-se,
+	 * antes de chamar este m√©todo, proteger as classes e objetos p√∫blicos
+	 * atrav√©s de {@link SecurityManager}. Para mais detalhes, veja {@link Fornecedor}.
+	 * @param porta Porta de comunica√ß√£o por {@link java.net.Socket}.
+	 * @param segura Conex√£o segura? Prote√ß√£o atrav√©s do protocolo TLS/SSL. Veja {@link ComunicacaoUtil#abrirKeyStore()}.
+	 * @param expressa Modo de comunica√ß√£o expressa? Veja {@link #isExpressa()}.
 	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.abrir"</code>
 	 * @see Autenticador
 	 * @see Auditor
@@ -233,14 +233,14 @@ public class Copaiba implements Closeable {
 	}
 
 	/**
-	 * {@link Copaiba} completa disponÌvel atravÈs de {@link Servidor}.
+	 * {@link Copaiba} completa dispon√≠vel atrav√©s de {@link Servidor}.
 	 * @see #abrir(int, boolean, boolean)
 	 */
 	public final void abrir( Servidor servidor ) throws CopaibaException {
 		
 		seguranca( "Copaiba.abrir" );
 
-		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A CopaÌba j· est· aberta." );
+		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A Copa√≠ba j√° est√° aberta." );
 		
 		if( servidor == null || ! servidor.isAberto() ) throw new IllegalArgumentException( "O servidor deve estar aberto." );
 		
@@ -306,7 +306,7 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
-	 * {@link Copaiba} completa disponÌvel atravÈs de {@link SocketServidor}.
+	 * {@link Copaiba} completa dispon√≠vel atrav√©s de {@link SocketServidor}.
 	 * @see #abrir(Servidor)
 	 * @see #abrir(int, boolean, boolean)
 	 */
@@ -319,8 +319,8 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
-	 * {@link Copaiba} completa disponÌvel atravÈs de {@link SocketServidor},
-	 * porta 8884 e seguranÁa TLS/SSL desativada.
+	 * {@link Copaiba} completa dispon√≠vel atrav√©s de {@link SocketServidor},
+	 * porta 8884 e seguran√ßa TLS/SSL desativada.
 	 * @see #abrir(Servidor)
 	 * @see #abrir(int, boolean, boolean)
 	 */
@@ -336,7 +336,7 @@ public class Copaiba implements Closeable {
 
 		seguranca( "Copaiba.abrir" );
 
-		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A CopaÌba j· est· aberta." );
+		if( isAberta() ) throw new CopaibaException( Erro.ESTADO_INVALIDO, "A Copa√≠ba j√° est√° aberta." );
 		
 		try{
 			
@@ -394,8 +394,8 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
-	 * A {@link Copaiba} est· aberta a conexıes de clientes?<br>
-	 * Este mÈtodo n„o verifica a efetividade da conex„o do servidor.
+	 * A {@link Copaiba} est√° aberta a conex√µes de clientes?<br>
+	 * Este m√©todo n√£o verifica a efetividade da conex√£o do servidor.
 	 * @see #abrir(int, boolean, boolean)
 	 * @see #abrir(Servidor)
 	 * @see #fechar()
@@ -405,12 +405,12 @@ public class Copaiba implements Closeable {
 	}
 
 	/**
-	 * Esta {@link Copaiba} est· no modo de comunicaÁ„o expressa?
-	 * A {@link Copaiba} expressa fornece um protocolo assÌncrono de comunicaÁ„o,
-	 * sem manutenÁ„o de sess„o, com foco em aÁıes simples e r·pidas,
-	 * o que impossibilita a utilizaÁ„o de v·rios recursos da {@link Copaiba}.
-	 * Por enquanto, o modo de comunicaÁ„o expressa suporta apenas a
-	 * {@link CopaibaConexao#solicitar(String, String, String) solicitaÁ„o}.
+	 * Esta {@link Copaiba} est√° no modo de comunica√ß√£o expressa?
+	 * A {@link Copaiba} expressa fornece um protocolo ass√≠ncrono de comunica√ß√£o,
+	 * sem manuten√ß√£o de sess√£o, com foco em a√ß√µes simples e r√°pidas,
+	 * o que impossibilita a utiliza√ß√£o de v√°rios recursos da {@link Copaiba}.
+	 * Por enquanto, o modo de comunica√ß√£o expressa suporta apenas a
+	 * {@link CopaibaConexao#solicitar(String, String, String) solicita√ß√£o}.
 	 */
 	public final boolean isExpressa() {
 		return coordenadores != null;
@@ -418,8 +418,8 @@ public class Copaiba implements Closeable {
 	
 	/**
 	 * Fecha este servidor e encerra todas as atividades internas, inclusive
-	 * as {@link CopaibaConexao conexıes} ativas.<br>
-	 * Contudo, poder· {@link #abrir(int, boolean, boolean) abrir} novamente.
+	 * as {@link CopaibaConexao conex√µes} ativas.<br>
+	 * Contudo, poder√° {@link #abrir(int, boolean, boolean) abrir} novamente.
 	 * @throws SecurityException {@link RuntimePermission} <code>"Copaiba.fechar"</code>
 	 * @see #abrir(int, boolean, boolean)
 	 * @see #isAberta()
@@ -727,8 +727,8 @@ public class Copaiba implements Closeable {
 	}
 	
 	/**
-	 * {@link Usuario} respons·vel pela {@link Thread} {@link Thread#currentThread() corrente}.
-	 * @return <code>null</code>, caso a {@link Thread} n„o esteja associada a um {@link Usuario}.
+	 * {@link Usuario} respons√°vel pela {@link Thread} {@link Thread#currentThread() corrente}.
+	 * @return <code>null</code>, caso a {@link Thread} n√£o esteja associada a um {@link Usuario}.
 	 */
 	public static final Usuario getUsuario() {
 		if( sessoes == null ) return null;
@@ -748,20 +748,20 @@ public class Copaiba implements Closeable {
 	/**
 	 * Verifica se o {@link Usuario} {@link #getUsuario() corrente}
 	 * pertence ao <code>grupo</code> indicado, conforme {@link Autenticador#pertence(Usuario, String)}.
-	 * @throws SecurityException caso o {@link Usuario} n„o pertenÁa ao <code>grupo</code>.
+	 * @throws SecurityException caso o {@link Usuario} n√£o perten√ßa ao <code>grupo</code>.
 	 * @see #getGrupos(Usuario)
 	 */
 	public static final void usuarioPertence( String grupo ) throws SecurityException {
 		
-		if( grupo == null || grupo.isEmpty() ) throw new SecurityException( "Grupo inv·lido." );
+		if( grupo == null || grupo.isEmpty() ) throw new SecurityException( "Grupo inv√°lido." );
 		
 		Usuario usuario = getUsuario();
-		if( usuario == null ) throw new SecurityException( "Usu·rio n„o identificado." );
-		if( usuario.autenticador == null ) throw new SecurityException( "Usu·rio n„o autenticado." );
+		if( usuario == null ) throw new SecurityException( "Usu√°rio n√£o identificado." );
+		if( usuario.autenticador == null ) throw new SecurityException( "Usu√°rio n√£o autenticado." );
 		
 		try{
 			if( ! usuario.autenticador.pertence( usuario, grupo ) ){
-				throw new SecurityException( "Usu·rio " + usuario.getNome() + " n„o pertence ao grupo " + grupo + "." );
+				throw new SecurityException( "Usu√°rio " + usuario.getNome() + " n√£o pertence ao grupo " + grupo + "." );
 			}
 		}catch( CopaibaException e ){
 			throw new SecurityException( e );
@@ -771,23 +771,23 @@ public class Copaiba implements Closeable {
 	
 	/**
 	 * Verifica se o {@link Usuario} {@link #getUsuario() corrente} possui
-	 * autorizaÁ„o para acessar o <code>recurso</code> indicado,
-	 * com base nas {@link Policy#getPolicy() polÌticas} de {@link System#getSecurityManager() seguranÁa}.<br>
-	 * Ser„o realizadas {@link SecurityManager#checkPermission(java.security.Permission)} com as possÌveis
-	 * variaÁıes de {@link CopaibaPermission}, conforme o {@link Usuario#getNome() nome} e os
+	 * autoriza√ß√£o para acessar o <code>recurso</code> indicado,
+	 * com base nas {@link Policy#getPolicy() pol√≠ticas} de {@link System#getSecurityManager() seguran√ßa}.<br>
+	 * Ser√£o realizadas {@link SecurityManager#checkPermission(java.security.Permission)} com as poss√≠veis
+	 * varia√ß√µes de {@link CopaibaPermission}, conforme o {@link Usuario#getNome() nome} e os
 	 * {@link #getGrupos(Usuario) grupos} do {@link Usuario}.
-	 * @param recurso Nome do recurso para o qual o {@link Usuario} deve possuir autorizaÁ„o.
-	 * @throws SecurityException caso o {@link Usuario} n„o possua autorizaÁ„o.
+	 * @param recurso Nome do recurso para o qual o {@link Usuario} deve possuir autoriza√ß√£o.
+	 * @throws SecurityException caso o {@link Usuario} n√£o possua autoriza√ß√£o.
 	 * @see SecurityManager
 	 * @see Policy
 	 * @see CopaibaPermission
 	 */
 	public static final void usuarioAutorizado( String recurso ) throws SecurityException {
 		
-		if( recurso == null || recurso.isEmpty() ) throw new SecurityException( "Recurso inv·lido." );
+		if( recurso == null || recurso.isEmpty() ) throw new SecurityException( "Recurso inv√°lido." );
 		
 		Usuario usuario = getUsuario();
-		if( usuario == null ) throw new SecurityException( "Usu·rio n„o identificado." );
+		if( usuario == null ) throw new SecurityException( "Usu√°rio n√£o identificado." );
 		
 		SecurityManager sm = System.getSecurityManager();
 		if( sm == null ) return;
@@ -903,7 +903,7 @@ public class Copaiba implements Closeable {
 							
 						}
 						
-						saida.texto( "CopaÌba" );
+						saida.texto( "Copa√≠ba" );
 						saida.real32( Copaiba.VERSAO );
 						
 						float  versao = entrada.real32();
@@ -911,7 +911,7 @@ public class Copaiba implements Closeable {
 						String senha  = entrada.texto();
 						
 						if( autenticador != null && ! autenticador.autenticar( nome, senha ) ){
-							enviar( Erro.AUTENTICACAO, CopaibaException.class, "Falha na autenticaÁ„o." );
+							enviar( Erro.AUTENTICACAO, CopaibaException.class, "Falha na autentica√ß√£o." );
 							return;
 						}else{
 							saida.comando( Comando.SUCESSO );
@@ -939,7 +939,7 @@ public class Copaiba implements Closeable {
 								boolean json      = entrada.inteiro8() == 1;
 								
 								if( ! permitirRotina ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para executar rotinas." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para executar rotinas." );
 									continue;
 								}
 								
@@ -1019,7 +1019,7 @@ public class Copaiba implements Closeable {
 								Serializable[] msg_params = (Serializable[]) entrada.objeto();
 								
 								if( ! permitirMensagem ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para enviar mensagens para objetos." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para enviar mensagens para objetos." );
 									continue;
 								}
 
@@ -1072,7 +1072,7 @@ public class Copaiba implements Closeable {
 									}
 									
 									if( mensagem == null ){
-										enviar( Erro.MENSAGEM_EXECUCAO, CopaibaException.class, "MÈtodo desconhecido: " + msg_metodo );
+										enviar( Erro.MENSAGEM_EXECUCAO, CopaibaException.class, "M√©todo desconhecido: " + msg_metodo );
 										continue;
 									}
 									
@@ -1103,7 +1103,7 @@ public class Copaiba implements Closeable {
 								Object  valor    = null;
 								
 								if( ! permitirLeitura ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para acessar vari·veis." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para acessar vari√°veis." );
 									continue;
 								}
 								
@@ -1160,7 +1160,7 @@ public class Copaiba implements Closeable {
 								}
 								
 								if( ! permitirAtribuicao ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para executar atribuiÁıes." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para executar atribui√ß√µes." );
 									continue;
 								}
 								
@@ -1189,7 +1189,7 @@ public class Copaiba implements Closeable {
 								String variavel = entrada.texto();
 								
 								if( ! permitirRemocao ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para executar remoÁıes." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para executar remo√ß√µes." );
 									continue;
 								}
 								
@@ -1208,7 +1208,7 @@ public class Copaiba implements Closeable {
 								String sol_metodo = entrada.texto();
 								
 								if( ! permitirSolicitacao ){
-									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para executar solicitaÁıes." );
+									enviar( Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para executar solicita√ß√µes." );
 									continue;
 								}
 								
@@ -1397,7 +1397,7 @@ public class Copaiba implements Closeable {
 			
 			tmp.reset();
 			tmpSaida.comando( Comando.SUCESSO );
-			tmpSaida.texto( "CopaÌba" );
+			tmpSaida.texto( "Copa√≠ba" );
 			tmpSaida.real32( Copaiba.VERSAO );
 			
 			tmpSaida.inteiro32( cert_bytes.length );
@@ -1542,7 +1542,7 @@ public class Copaiba implements Closeable {
 		
 		@Override
 		public UUID registrarTransferencia( File arquivo, Notificacao<File,?> exito, Notificacao<File,Throwable> erro ) throws CopaibaException {
-			if( ! permitirTransferencia ) throw new SecurityException( "Sem permiss„o para executar transferÍncias." );
+			if( ! permitirTransferencia ) throw new SecurityException( "Sem permiss√£o para executar transfer√™ncias." );
 			if( arquivo == null ) throw new IllegalArgumentException();
 			if( arquivo.length() > 0 ){
 				usuarioAutorizado( "Copaiba.transferencia.leitura" );				
@@ -1562,7 +1562,7 @@ public class Copaiba implements Closeable {
 	}
 
 	/**
-	 * Processador de requisiÁıes expressas.
+	 * Processador de requisi√ß√µes expressas.
 	 */
 	private class SessaoExpressa extends ChannelInboundHandlerAdapter {
 
@@ -1680,7 +1680,7 @@ public class Copaiba implements Closeable {
 		private void comandoSolicitar( ChannelHandlerContext ctx ) {
 
 			if( ! permitirSolicitacao ){
-				enviarErro( ctx, Erro.PERMISSAO, SecurityException.class, "Sem permiss„o para executar solicitaÁıes." );
+				enviarErro( ctx, Erro.PERMISSAO, SecurityException.class, "Sem permiss√£o para executar solicita√ß√µes." );
 				return;
 			}
 

@@ -1,40 +1,40 @@
 
 /*
- *  Copyright (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Copyright (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  *  
- *  This file is part of CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  This file is part of Copa√≠ba - <http://joseflavio.com/copaiba/>.
  *  
- *  CopaÌba is free software: you can redistribute it and/or modify
+ *  Copa√≠ba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  
- *  CopaÌba is distributed in the hope that it will be useful,
+ *  Copa√≠ba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Lesser General Public License for more details.
  *  
  *  You should have received a copy of the GNU Lesser General Public License
- *  along with CopaÌba. If not, see <http://www.gnu.org/licenses/>.
+ *  along with Copa√≠ba. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Direitos Autorais Reservados (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  * 
- *  Este arquivo È parte de CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  Este arquivo √© parte de Copa√≠ba - <http://joseflavio.com/copaiba/>.
  * 
- *  CopaÌba È software livre: vocÍ pode redistribuÌ-lo e/ou modific·-lo
- *  sob os termos da LicenÁa P˙blica Menos Geral GNU conforme publicada pela
- *  Free Software Foundation, tanto a vers„o 3 da LicenÁa, como
- *  (a seu critÈrio) qualquer vers„o posterior.
+ *  Copa√≠ba √© software livre: voc√™ pode redistribu√≠-lo e/ou modific√°-lo
+ *  sob os termos da Licen√ßa P√∫blica Menos Geral GNU conforme publicada pela
+ *  Free Software Foundation, tanto a vers√£o 3 da Licen√ßa, como
+ *  (a seu crit√©rio) qualquer vers√£o posterior.
  * 
- *  CopaÌba È distribuÌdo na expectativa de que seja ˙til,
- *  porÈm, SEM NENHUMA GARANTIA; nem mesmo a garantia implÌcita de
- *  COMERCIABILIDADE ou ADEQUA«√O A UMA FINALIDADE ESPECÕFICA. Consulte a
- *  LicenÁa P˙blica Menos Geral do GNU para mais detalhes.
+ *  Copa√≠ba √© distribu√≠do na expectativa de que seja √∫til,
+ *  por√©m, SEM NENHUMA GARANTIA; nem mesmo a garantia impl√≠cita de
+ *  COMERCIABILIDADE ou ADEQUA√á√ÉO A UMA FINALIDADE ESPEC√çFICA. Consulte a
+ *  Licen√ßa P√∫blica Menos Geral do GNU para mais detalhes.
  * 
- *  VocÍ deve ter recebido uma cÛpia da LicenÁa P˙blica Menos Geral do GNU
- *  junto com CopaÌba. Se n„o, veja <http://www.gnu.org/licenses/>.
+ *  Voc√™ deve ter recebido uma c√≥pia da Licen√ßa P√∫blica Menos Geral do GNU
+ *  junto com Copa√≠ba. Se n√£o, veja <http://www.gnu.org/licenses/>.
  */
 
 package com.joseflavio.copaiba;
@@ -89,8 +89,8 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 /**
- * Conex„o ‡ {@link Copaiba}.
- * @author JosÈ Fl·vio de Souza Dias J˙nior
+ * Conex√£o √† {@link Copaiba}.
+ * @author Jos√© Fl√°vio de Souza Dias J√∫nior
  */
 public class CopaibaConexao implements Closeable {
 
@@ -115,8 +115,8 @@ public class CopaibaConexao implements Closeable {
 	private String usuario;
 	
 	/**
-	 * Conex„o a uma {@link Copaiba}.
-	 * @param consumidor Meio de comunicaÁ„o com o {@link Servidor} {@link Copaiba}.
+	 * Conex√£o a uma {@link Copaiba}.
+	 * @param consumidor Meio de comunica√ß√£o com o {@link Servidor} {@link Copaiba}.
 	 * @param usuario Veja {@link Autenticador#autenticar(String, String)}
 	 * @param senha Veja {@link Autenticador#autenticar(String, String)}
 	 */
@@ -125,7 +125,7 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * {@link #CopaibaConexao(Consumidor, Modo, String, String) Conex„o} em {@link Modo#JAVA}.
+	 * {@link #CopaibaConexao(Consumidor, Modo, String, String) Conex√£o} em {@link Modo#JAVA}.
 	 */
 	public CopaibaConexao( Consumidor consumidor, String usuario, String senha ) throws CopaibaException {
 		this( consumidor, Modo.JAVA, usuario, senha );
@@ -156,8 +156,8 @@ public class CopaibaConexao implements Closeable {
 	}
 
 	/**
-	 * Estabelece uma conex„o normal ou configura uma conex„o expressa para uma {@link Copaiba}.
-	 * Sendo normal, ser· utilizado um {@link SocketConsumidor} em {@link Modo#JAVA}.
+	 * Estabelece uma conex√£o normal ou configura uma conex√£o expressa para uma {@link Copaiba}.
+	 * Sendo normal, ser√° utilizado um {@link SocketConsumidor} em {@link Modo#JAVA}.
 	 */
 	public CopaibaConexao( String endereco, int porta, boolean segura, boolean ignorarCertificado, boolean expressa ) throws CopaibaException {
 		if( expressa ){
@@ -200,12 +200,12 @@ public class CopaibaConexao implements Closeable {
 			}
 			
 			String servico = entrada.texto();
-			if( servico == null || ! servico.equals( "CopaÌba" ) ){
-				throw new CopaibaException( Erro.DESCONHECIDO, "ServiÁo incompatÌvel." );
+			if( servico == null || ! servico.equals( "Copa√≠ba" ) ){
+				throw new CopaibaException( Erro.DESCONHECIDO, "Servi√ßo incompat√≠vel." );
 			}
 			
 			float versao = entrada.real32();
-			if( versao < Copaiba.VERSAO ) throw new IOException( "Vers„o incompatÌvel." );
+			if( versao < Copaiba.VERSAO ) throw new IOException( "Vers√£o incompat√≠vel." );
 			
 			saida.real32( Copaiba.VERSAO );
 			saida.texto( usuario );
@@ -235,8 +235,8 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * ObtÈm {@link Informacao} sobre um {@link Servidor} {@link Copaiba}.<br>
-	 * O {@link Consumidor} ser· {@link Consumidor#fechar() fechado}.
+	 * Obt√©m {@link Informacao} sobre um {@link Servidor} {@link Copaiba}.<br>
+	 * O {@link Consumidor} ser√° {@link Consumidor#fechar() fechado}.
 	 */
 	public static Informacao obterInformacao( Consumidor consumidor ) throws RuntimeException, CopaibaException {
 
@@ -264,8 +264,8 @@ public class CopaibaConexao implements Closeable {
 			}
 			
 			String servico = entrada.texto();
-			if( servico == null || ! servico.equals( "CopaÌba" ) ){
-				throw new CopaibaException( Erro.DESCONHECIDO, "ServiÁo incompatÌvel." );
+			if( servico == null || ! servico.equals( "Copa√≠ba" ) ){
+				throw new CopaibaException( Erro.DESCONHECIDO, "Servi√ßo incompat√≠vel." );
 			}
 			
 			final float versao = entrada.real32();
@@ -324,14 +324,14 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Efetua uma transferÍncia de {@link File arquivo}, previamente {@link Servico#registrarTransferencia(File, Notificacao, Notificacao) registrado}.<br>
-	 * O {@link Consumidor} ser· {@link Consumidor#fechar() fechado}.
-	 * @param consumidor Canal de transferÍncia.
-	 * @param registro {@link Servico#registrarTransferencia(File, Notificacao, Notificacao) Registro} de transferÍncia.
-	 * @param arquivo {@link File Arquivo} de escrita (download) ou de leitura (upload, se {@link File#length() tamanho} > 0).
-	 * @param exito {@link Notificacao} executada apÛs a conclus„o efetiva da transferÍncia. Opcional.
-	 * @param erro {@link Notificacao} executada apÛs algum impeditivo da transferÍncia. Opcional.
-	 * @param progresso {@link Notificacao} que observa o progresso da transferÍncia, entre 0 e 100 %. Opcional.
+	 * Efetua uma transfer√™ncia de {@link File arquivo}, previamente {@link Servico#registrarTransferencia(File, Notificacao, Notificacao) registrado}.<br>
+	 * O {@link Consumidor} ser√° {@link Consumidor#fechar() fechado}.
+	 * @param consumidor Canal de transfer√™ncia.
+	 * @param registro {@link Servico#registrarTransferencia(File, Notificacao, Notificacao) Registro} de transfer√™ncia.
+	 * @param arquivo {@link File Arquivo} de escrita (download) ou de leitura (upload, se {@link File#length() tamanho} &gt; 0).
+	 * @param exito {@link Notificacao} executada ap√≥s a conclus√£o efetiva da transfer√™ncia. Opcional.
+	 * @param erro {@link Notificacao} executada ap√≥s algum impeditivo da transfer√™ncia. Opcional.
+	 * @param progresso {@link Notificacao} que observa o progresso da transfer√™ncia, entre 0 e 100 %. Opcional.
 	 * @see Servico#registrarTransferencia(File, Notificacao, Notificacao)
 	 */
 	public static void transferir( Consumidor consumidor, UUID registro, File arquivo, Notificacao<File,?> exito, Notificacao<File,Throwable> erro, Notificacao<File,Float> progresso ) {
@@ -484,13 +484,13 @@ public class CopaibaConexao implements Closeable {
 	}
 
 	/**
-	 * Reconhece e dispara uma exceÁ„o conforme seu {@link Class#getName() endereÁo} e {@link Throwable#getMessage() mensagem}.
-	 * @param erro EspecificaÁ„o da exceÁ„o no contexto da {@link Copaiba}.
-	 * @param classeNome EndereÁo completo da classe de {@link Throwable exceÁ„o}.
+	 * Reconhece e dispara uma exce√ß√£o conforme seu {@link Class#getName() endere√ßo} e {@link Throwable#getMessage() mensagem}.
+	 * @param erro Especifica√ß√£o da exce√ß√£o no contexto da {@link Copaiba}.
+	 * @param classeNome Endere√ßo completo da classe de {@link Throwable exce√ß√£o}.
 	 * @param mensagem Mensagem de erro. Veja {@link Throwable#getMessage()}.
-	 * @param sucesso Atividade a ser executada quando do reconhecimento positivo da exceÁ„o a ser disparada. Pode ser null.
-	 * @throws RuntimeException Classe de exceÁ„o que ser· disparada preferencialmente.
-	 * @throws CopaibaException Classe de exceÁ„o secund·ria, normalmente disparada encapsulando outra exceÁ„o.
+	 * @param sucesso Atividade a ser executada quando do reconhecimento positivo da exce√ß√£o a ser disparada. Pode ser null.
+	 * @throws RuntimeException Classe de exce√ß√£o que ser√° disparada preferencialmente.
+	 * @throws CopaibaException Classe de exce√ß√£o secund√°ria, normalmente disparada encapsulando outra exce√ß√£o.
 	 */
 	private static void dispararErro( Erro erro, String classeNome, String mensagem, Runnable sucesso ) throws RuntimeException, CopaibaException {
 		
@@ -542,17 +542,17 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Executa remotamente um conjunto de instruÁıes (rotina).<br>
-	 * Vari·veis estar„o automaticamente disponibilizadas conforme o processo de
+	 * Executa remotamente um conjunto de instru√ß√µes (rotina).<br>
+	 * Vari√°veis estar√£o automaticamente disponibilizadas conforme o processo de
 	 * {@link Fornecedor#fornecer(Usuario, Map) fornecimento} de objetos.
-	 * Os nomes delas estar„o num array de {@link String} denominado "copaiba_nomes".<br>
+	 * Os nomes delas estar√£o num array de {@link String} denominado "copaiba_nomes".<br>
 	 * Exemplo de rotina na linguagem Groovy:
 	 * <pre>
 	 * for( nome in copaiba_nomes ) println nome
 	 * </pre>
-	 * Vari·veis criadas na {@link CopaibaConexao#executar(String, String, java.io.Writer) execuÁ„o} corrente ser„o
-	 * mantidas para a prÛxima {@link CopaibaConexao#executar(String, String, java.io.Writer) execuÁ„o}.<br>
-	 * Vari·veis automaticamente criadas e mantidas pelo escopo de execuÁ„o:<br>
+	 * Vari√°veis criadas na {@link CopaibaConexao#executar(String, String, java.io.Writer) execu√ß√£o} corrente ser√£o
+	 * mantidas para a pr√≥xima {@link CopaibaConexao#executar(String, String, java.io.Writer) execu√ß√£o}.<br>
+	 * Vari√°veis automaticamente criadas e mantidas pelo escopo de execu√ß√£o:<br>
 	 * <ul>
 	 * <li><code>copaiba_versao     : </code>{@link Copaiba#VERSAO}</li>
 	 * <li><code>copaiba_usuario    : </code>{@link Usuario} corrente</li>
@@ -561,9 +561,9 @@ public class CopaibaConexao implements Closeable {
 	 * <li><code>copaiba_informacao : </code>{@link Informacao}</li>
 	 * <li><code>copaiba_servico    : </code>{@link Servico}</li>
 	 * </ul>
-	 * @param linguagem Linguagem de programaÁ„o: {@link ScriptEngineManager#getEngineByName(String)}
-	 * @param rotina InstruÁıes a serem executadas.
-	 * @param impressao SaÌda textual da rotina (stdout), incluindo erros (stderr). Opcional.
+	 * @param linguagem Linguagem de programa√ß√£o: {@link ScriptEngineManager#getEngineByName(String)}
+	 * @param rotina Instru√ß√µes a serem executadas.
+	 * @param impressao Sa√≠da textual da rotina (stdout), incluindo erros (stderr). Opcional.
 	 * @param json Exige retorno no formato JSON, representando-o numa {@link String}.
 	 * @return {@link Serializable Objeto} resultante da rotina.
 	 * @see Copaiba#isPermitirRotina()
@@ -576,10 +576,10 @@ public class CopaibaConexao implements Closeable {
 		if( rotina     == null ) throw new IllegalArgumentException( "rotina" );
 
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 
 		try{
 			
@@ -622,7 +622,7 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * {@link #executar(String, String, Writer, boolean) ExecuÁ„o} normal, sem exigir retorno
+	 * {@link #executar(String, String, Writer, boolean) Execu√ß√£o} normal, sem exigir retorno
 	 * no formato JSON.
 	 */
 	public synchronized Serializable executar( String linguagem, String rotina, Writer impressao ) throws RuntimeException, CopaibaException {
@@ -630,9 +630,9 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * O mesmo que {@link #executar(String, String, Writer)}, porÈm especificando a rotina
-	 * atravÈs de {@link Reader}.<br>
-	 * O {@link Reader} n„o ser· {@link Reader#close() fechado}.
+	 * O mesmo que {@link #executar(String, String, Writer)}, por√©m especificando a rotina
+	 * atrav√©s de {@link Reader}.<br>
+	 * O {@link Reader} n√£o ser√° {@link Reader#close() fechado}.
 	 * @see #executar(String, String, Writer)
 	 */
 	public synchronized Serializable executar( String linguagem, Reader rotina, Writer impressao ) throws RuntimeException, CopaibaException {
@@ -641,10 +641,10 @@ public class CopaibaConexao implements Closeable {
 		if( rotina     == null ) throw new IllegalArgumentException( "rotina" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -668,25 +668,25 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * {@link #executar(String, String, Writer) ExecuÁ„o} direcionada para {@link System#out}.
+	 * {@link #executar(String, String, Writer) Execu√ß√£o} direcionada para {@link System#out}.
 	 */
 	public synchronized Serializable executar( String linguagem, String rotina ) throws RuntimeException, CopaibaException {
 		return executar( linguagem, rotina, new PrintWriter( System.out ) );
 	}
 	
 	/**
-	 * {@link #executar(String, String, Writer) ExecuÁ„o} com Groovy e direcionada para {@link System#out}.
+	 * {@link #executar(String, String, Writer) Execu√ß√£o} com Groovy e direcionada para {@link System#out}.
 	 */
 	public synchronized Serializable executar( String rotina ) throws RuntimeException, CopaibaException {
 		return executar( "Groovy", rotina, new PrintWriter( System.out ) );
 	}
 	
 	/**
-	 * Executa um {@link Method mÈtodo} remoto e retorna o seu resultado.
+	 * Executa um {@link Method m√©todo} remoto e retorna o seu resultado.
 	 * @param objeto Nome do objeto {@link Fornecedor fornecido} ou previamente criado.
-	 * @param metodo Nome do {@link Method mÈtodo} desejado.
+	 * @param metodo Nome do {@link Method m√©todo} desejado.
 	 * @param json Exige retorno no formato JSON, representando-o numa {@link String}.
-	 * @param parametros Par‚metros a serem passados para o {@link Method mÈtodo} remoto.
+	 * @param parametros Par√¢metros a serem passados para o {@link Method m√©todo} remoto.
 	 */
 	public synchronized Serializable obter( String objeto, String metodo, boolean json, Serializable... parametros ) throws RuntimeException, CopaibaException {
 		
@@ -694,10 +694,10 @@ public class CopaibaConexao implements Closeable {
 		if( metodo     == null ) throw new IllegalArgumentException( "metodo" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -728,10 +728,10 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * ObtÈm o valor de uma vari·vel remota, {@link Fornecedor fornecida} ou criada atravÈs
-	 * de {@link #atribuir(String, Serializable) atribuiÁ„o} ou de
+	 * Obt√©m o valor de uma vari√°vel remota, {@link Fornecedor fornecida} ou criada atrav√©s
+	 * de {@link #atribuir(String, Serializable) atribui√ß√£o} ou de
 	 * {@link #executar(String, String, Writer) rotina}.
-	 * @param variavel Nome da vari·vel desejada.
+	 * @param variavel Nome da vari√°vel desejada.
 	 * @param json Exige retorno no formato JSON, representando-o numa {@link String}.
 	 */
 	public synchronized Serializable obter( String variavel, boolean json ) throws RuntimeException, CopaibaException {
@@ -739,10 +739,10 @@ public class CopaibaConexao implements Closeable {
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 
 		try{
 			
@@ -778,19 +778,19 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Atribui um objeto a uma vari·vel.
-	 * @param variavel Nome da vari·vel (existente ou n„o).
-	 * @param objeto Conte˙do da vari·vel. Pode ser <code>null</code>.
+	 * Atribui um objeto a uma vari√°vel.
+	 * @param variavel Nome da vari√°vel (existente ou n√£o).
+	 * @param objeto Conte√∫do da vari√°vel. Pode ser <code>null</code>.
 	 */
 	public synchronized void atribuir( String variavel, Serializable objeto ) throws RuntimeException, CopaibaException {
 		
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -818,10 +818,10 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Atribui um objeto a uma vari·vel, desserializando-o a partir de um JSON.
-	 * @param variavel Nome da vari·vel (existente ou n„o).
+	 * Atribui um objeto a uma vari√°vel, desserializando-o a partir de um JSON.
+	 * @param variavel Nome da vari√°vel (existente ou n√£o).
 	 * @param classe Nome da classe (tipo) do objeto a ser desserializado.
-	 * @param json Conte˙do JSON para desserializaÁ„o (estado do objeto). Pode ser <code>null</code>.
+	 * @param json Conte√∫do JSON para desserializa√ß√£o (estado do objeto). Pode ser <code>null</code>.
 	 */
 	public synchronized void atribuir( String variavel, String classe, String json ) throws RuntimeException, CopaibaException {
 		
@@ -829,10 +829,10 @@ public class CopaibaConexao implements Closeable {
 		if( classe     == null ) throw new IllegalArgumentException( "classe" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -861,19 +861,19 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Apaga uma vari·vel previamente criada atravÈs de {@link #executar(String, String, Writer) rotina}
-	 * ou de {@link #atribuir(String, Serializable) atribuiÁ„o}.
-	 * @param variavel Nome da vari·vel.
+	 * Apaga uma vari√°vel previamente criada atrav√©s de {@link #executar(String, String, Writer) rotina}
+	 * ou de {@link #atribuir(String, Serializable) atribui√ß√£o}.
+	 * @param variavel Nome da vari√°vel.
 	 */
 	public synchronized void remover( String variavel ) throws RuntimeException, CopaibaException {
 		
 		if( variavel   == null ) throw new IllegalArgumentException( "variavel" );
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 		
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -899,10 +899,10 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * Instancia um objeto remoto e executa um de seus {@link Method mÈtodos}.
+	 * Instancia um objeto remoto e executa um de seus {@link Method m√©todos}.
 	 * @param classe {@link Class#getName() Nome} da classe do objeto.
 	 * @param estado Estado serializado do objeto, no formato JSON.
-	 * @param metodo Nome do {@link Method mÈtodo} desejado, sem par‚metro.
+	 * @param metodo Nome do {@link Method m√©todo} desejado, sem par√¢metro.
 	 * @return resultado no formato JSON.
 	 */
 	public synchronized String solicitar( String classe, String estado, String metodo ) throws RuntimeException, CopaibaException {
@@ -915,7 +915,7 @@ public class CopaibaConexao implements Closeable {
 			return conectarExpressa( "SOLICITAR", classe, metodo, estado );
 		}
 
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -960,25 +960,25 @@ public class CopaibaConexao implements Closeable {
 	}
 	
 	/**
-	 * A {@link CopaibaConexao} est· aberta?<br>
-	 * Verifica se o {@link Consumidor} est· {@link Consumidor#isAberto() aberto}.<br>
-	 * Se a conex„o for do tipo expressa, sempre retornar· false.
+	 * A {@link CopaibaConexao} est√° aberta?<br>
+	 * Verifica se o {@link Consumidor} est√° {@link Consumidor#isAberto() aberto}.<br>
+	 * Se a conex√£o for do tipo expressa, sempre retornar√° false.
 	 */
 	public synchronized boolean isAberta() {
 		return consumidor != null && consumidor.isAberto();
 	}
 	
 	/**
-	 * Verifica se a {@link CopaibaConexao} est· {@link #isAberta() aberta} e funcionando devidamente,
+	 * Verifica se a {@link CopaibaConexao} est√° {@link #isAberta() aberta} e funcionando devidamente,
 	 * enviando um {@link Comando#VERIFICACAO}.
 	 */
 	public synchronized void verificar() throws RuntimeException, CopaibaException {
 		
 		if( expressa ){
-			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indisponÌvel atravÈs de conex„o expressa." );
+			throw new CopaibaException( Erro.COMANDO_DESCONHECIDO, "Comando indispon√≠vel atrav√©s de conex√£o expressa." );
 		}
 
-		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex„o fechada." );
+		if( consumidor == null ) throw new CopaibaException( Erro.CONEXAO_FECHADA, "Conex√£o fechada." );
 		
 		try{
 			
@@ -1005,9 +1005,9 @@ public class CopaibaConexao implements Closeable {
 	/**
 	 * Envia o {@link Comando#FIM} para a {@link Copaiba} e, se obter {@link Comando#SUCESSO},
 	 * {@link Consumidor#fechar() fecha} o {@link Consumidor} e inutiliza esta {@link CopaibaConexao}.<br>
-	 * Se a conex„o for do tipo expressa, este mÈtodo nada far·.
-	 * @param garantir Fechar mesmo com negaÁ„o ou erro da {@link Copaiba}?
-	 * @throws CopaibaException caso ocorra algum erro durante o fechamento n„o forÁado.
+	 * Se a conex√£o for do tipo expressa, este m√©todo nada far√°.
+	 * @param garantir Fechar mesmo com nega√ß√£o ou erro da {@link Copaiba}?
+	 * @throws CopaibaException caso ocorra algum erro durante o fechamento n√£o for√ßado.
 	 * @see Consumidor#fechar()
 	 */
 	public synchronized void fechar( boolean garantir ) throws RuntimeException, CopaibaException {
@@ -1068,7 +1068,7 @@ public class CopaibaConexao implements Closeable {
 	}
 
 	/**
-	 * Efetiva uma conex„o expressa enviando a cadeia de comando desejado e
+	 * Efetiva uma conex√£o expressa enviando a cadeia de comando desejado e
 	 * retornando a resposta final.
 	 */
 	private String conectarExpressa( String... comando ) throws RuntimeException, CopaibaException {
@@ -1128,9 +1128,9 @@ public class CopaibaConexao implements Closeable {
 	}
 
 	/**
-	 * Conex„o expressa com um servidor {@link Copaiba},
+	 * Conex√£o expressa com um servidor {@link Copaiba},
 	 * compreendendo um ciclo completo de vida,
-	 * conex„o-requisiÁ„o-resposta-fechamento.
+	 * conex√£o-requisi√ß√£o-resposta-fechamento.
 	 */
 	private final class ConexaoExpressa extends ChannelInboundHandlerAdapter {
 

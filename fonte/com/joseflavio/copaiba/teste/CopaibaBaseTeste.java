@@ -1,40 +1,40 @@
 
 /*
- *  Copyright (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Copyright (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  *  
- *  This file is part of CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  This file is part of Copa√≠ba - <http://joseflavio.com/copaiba/>.
  *  
- *  CopaÌba is free software: you can redistribute it and/or modify
+ *  Copa√≠ba is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  
- *  CopaÌba is distributed in the hope that it will be useful,
+ *  Copa√≠ba is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Lesser General Public License for more details.
  *  
  *  You should have received a copy of the GNU Lesser General Public License
- *  along with CopaÌba. If not, see <http://www.gnu.org/licenses/>.
+ *  along with Copa√≠ba. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- *  Direitos Autorais Reservados (C) 2016-2018 JosÈ Fl·vio de Souza Dias J˙nior
+ *  Direitos Autorais Reservados (C) 2016-2018 Jos√© Fl√°vio de Souza Dias J√∫nior
  * 
- *  Este arquivo È parte de CopaÌba - <http://joseflavio.com/copaiba/>.
+ *  Este arquivo √© parte de Copa√≠ba - <http://joseflavio.com/copaiba/>.
  * 
- *  CopaÌba È software livre: vocÍ pode redistribuÌ-lo e/ou modific·-lo
- *  sob os termos da LicenÁa P˙blica Menos Geral GNU conforme publicada pela
- *  Free Software Foundation, tanto a vers„o 3 da LicenÁa, como
- *  (a seu critÈrio) qualquer vers„o posterior.
+ *  Copa√≠ba √© software livre: voc√™ pode redistribu√≠-lo e/ou modific√°-lo
+ *  sob os termos da Licen√ßa P√∫blica Menos Geral GNU conforme publicada pela
+ *  Free Software Foundation, tanto a vers√£o 3 da Licen√ßa, como
+ *  (a seu crit√©rio) qualquer vers√£o posterior.
  * 
- *  CopaÌba È distribuÌdo na expectativa de que seja ˙til,
- *  porÈm, SEM NENHUMA GARANTIA; nem mesmo a garantia implÌcita de
- *  COMERCIABILIDADE ou ADEQUA«√O A UMA FINALIDADE ESPECÕFICA. Consulte a
- *  LicenÁa P˙blica Menos Geral do GNU para mais detalhes.
+ *  Copa√≠ba √© distribu√≠do na expectativa de que seja √∫til,
+ *  por√©m, SEM NENHUMA GARANTIA; nem mesmo a garantia impl√≠cita de
+ *  COMERCIABILIDADE ou ADEQUA√á√ÉO A UMA FINALIDADE ESPEC√çFICA. Consulte a
+ *  Licen√ßa P√∫blica Menos Geral do GNU para mais detalhes.
  * 
- *  VocÍ deve ter recebido uma cÛpia da LicenÁa P˙blica Menos Geral do GNU
- *  junto com CopaÌba. Se n„o, veja <http://www.gnu.org/licenses/>.
+ *  Voc√™ deve ter recebido uma c√≥pia da Licen√ßa P√∫blica Menos Geral do GNU
+ *  junto com Copa√≠ba. Se n√£o, veja <http://www.gnu.org/licenses/>.
  */
 
 package com.joseflavio.copaiba.teste;
@@ -81,7 +81,7 @@ import com.joseflavio.urucum.comunicacao.Consumidor;
 
 /**
  * {@link Test} base geral da {@link Copaiba}.
- * @author JosÈ Fl·vio de Souza Dias J˙nior
+ * @author Jos√© Fl√°vio de Souza Dias J√∫nior
  */
 @FixMethodOrder(MethodSorters.JVM)
 public abstract class CopaibaBaseTeste {
@@ -121,14 +121,14 @@ public abstract class CopaibaBaseTeste {
 					KeyStoreException, CertificateException,
 					NoSuchAlgorithmException {
 		
-		// Conex„o
+		// Conex√£o
 		
 		Consumidor consumidor = novoConsumidor();
 		Informacao info = CopaibaConexao.obterInformacao( consumidor );
 
 		Assert.assertFalse( consumidor.isAberto() );
 		
-		// Vers„o
+		// Vers√£o
 		
 		Assert.assertEquals( Copaiba.VERSAO, info.getVersao(), 0 );
 		
@@ -164,7 +164,7 @@ public abstract class CopaibaBaseTeste {
 	public void testarConexao() throws CopaibaException {
 		
 		CopaibaConexao copaiba1 = novaCopaibaConexao( "jose", "1234" );
-		Assert.assertTrue( ((String)copaiba1.executar( "pessoa.nome" )).equals( "JosÈ Teste" ) );
+		Assert.assertTrue( ((String)copaiba1.executar( "pessoa.nome" )).equals( "Jos√© Teste" ) );
 		verificarFechamento( copaiba1 );
 		
 		CopaibaConexao copaiba2 = novaCopaibaConexao( "maria", "4321" );
@@ -208,9 +208,9 @@ public abstract class CopaibaBaseTeste {
 		//Pessoa
 		
 		TestePessoa pessoa = new TestePessoa(
-			"JosÈ Fl·vio de Souza Dias J˙nior",
+			"Jos√© Fl√°vio de Souza Dias J√∫nior",
 			new Date(),
-			new TestePessoa( "CecÌlia Maria Tavares Dias", new Date(), null )
+			new TestePessoa( "Cec√≠lia Maria Tavares Dias", new Date(), null )
 		);
 		
 		copaiba.atribuir( "teste", pessoa );
@@ -237,8 +237,8 @@ public abstract class CopaibaBaseTeste {
 		
 		//String
 		
-		copaiba.atribuir( "texto", "JosÈ Fl·vio" );
-		Assert.assertEquals( "JosÈ Fl·vio", copaiba.executar( "texto" ) );
+		copaiba.atribuir( "texto", "Jos√© Fl√°vio" );
+		Assert.assertEquals( "Jos√© Fl√°vio", copaiba.executar( "texto" ) );
 		
 		//Vetor
 		
@@ -276,7 +276,7 @@ public abstract class CopaibaBaseTeste {
 		Calendar cal = Calendar.getInstance();
 		cal.set( 1985, 4, 25, 20, 0, 0 );
 		
-		String json = "{\"nome\":\"JosÈ Fl·vio\",\"nascimento\":" + cal.getTimeInMillis() + ",\"mae\":null}";
+		String json = "{\"nome\":\"Jos√© Fl√°vio\",\"nascimento\":" + cal.getTimeInMillis() + ",\"mae\":null}";
 		
 		copaiba.atribuir(
 			"json",
@@ -285,7 +285,7 @@ public abstract class CopaibaBaseTeste {
 		);
 		
 		Assert.assertEquals(
-			new TestePessoa( "JosÈ Fl·vio", cal.getTime(), null ),
+			new TestePessoa( "Jos√© Fl√°vio", cal.getTime(), null ),
 			copaiba.obter( "json" )
 		);
 		
@@ -295,7 +295,7 @@ public abstract class CopaibaBaseTeste {
 		);
 		
 		Assert.assertEquals(
-			"\"JosÈ Fl·vio\"",
+			"\"Jos√© Fl√°vio\"",
 			copaiba.obter( "json", "getNome", true )
 		);
 		
@@ -310,7 +310,7 @@ public abstract class CopaibaBaseTeste {
 		
 		CopaibaConexao copaiba = novaCopaibaConexao( "jose", "1234" );
 		
-		Assert.assertEquals( "JosÈ Teste", copaiba.obter( "pessoa", "getNome", false ) );
+		Assert.assertEquals( "Jos√© Teste", copaiba.obter( "pessoa", "getNome", false ) );
 		
 		Assert.assertEquals( 16.8d, ((Number)copaiba.obter( "compartilhado", "somar", false, 12.3d, 4.5d )).doubleValue(), 0d );
 		
@@ -324,9 +324,9 @@ public abstract class CopaibaBaseTeste {
 		Assert.assertEquals( ((anoAtual-1985)+(anoAtual-1991)), resultado );
 		
 		copaiba.atribuir( "inteiro", 21 );
-		copaiba.atribuir( "texto", "JosÈ Fl·vio" );
+		copaiba.atribuir( "texto", "Jos√© Fl√°vio" );
 		Assert.assertEquals( 21, ((Number)copaiba.obter( "inteiro" )).intValue() );
-		Assert.assertEquals( "JosÈ Fl·vio", copaiba.obter( "texto" ) );
+		Assert.assertEquals( "Jos√© Fl√°vio", copaiba.obter( "texto" ) );
 		
 		verificarFechamento( copaiba );
 		
@@ -347,13 +347,13 @@ public abstract class CopaibaBaseTeste {
 			Assert.fail();
 		}catch( Exception e ){
 		}
-		Assert.assertTrue( ((String)copaiba.executar( "pessoa.nome" )).equals( "JosÈ Teste" ) );
+		Assert.assertTrue( ((String)copaiba.executar( "pessoa.nome" )).equals( "Jos√© Teste" ) );
 		try{
-			copaiba.executar( "compartilhado" ); //n„o serializ·vel
+			copaiba.executar( "compartilhado" ); //n√£o serializ√°vel
 			Assert.fail();
 		}catch( Exception e ){
 		}
-		Assert.assertTrue( ((String)copaiba.executar( "pessoa.nome" )).equals( "JosÈ Teste" ) );
+		Assert.assertTrue( ((String)copaiba.executar( "pessoa.nome" )).equals( "Jos√© Teste" ) );
 		verificarFechamento( copaiba );
 	}
 	
