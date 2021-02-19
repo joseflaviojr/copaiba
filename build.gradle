@@ -1,51 +1,31 @@
 //------------------------------------------------------
 
-apply plugin: "java"
-apply plugin: "maven"
-apply plugin: "signing"
-apply plugin: "eclipse"
-apply plugin: "idea"
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'eclipse'
+    id 'idea'
+}
 
 //------------------------------------------------------
 
-String nome = "Copaiba"
-String descricao = "Programação em tempo de execução remota."
+String nome      = 'Copaiba'
+String descricao = 'Programação em tempo de execução remota.'
 
-group = "com.joseflavio"
-archivesBaseName = "copaiba"
-version = "1.0-A16"
-
-//------------------------------------------------------
-
-[
-
-"biblioteca", // Dependências diretas: *.jar
-"fonte",      // Código fonte: *.java
-"recurso",    // Anexos que serão embutidos no ".jar"
-"projeto",    // Arquivos de projeto: doc, svg, psd, etc.
-"rascunho"    // Arquivos temporários e descartáveis
-
-].each { new File(it).mkdirs() }
+group   = 'com.joseflavio'
+version = '1.0-A16'
 
 //------------------------------------------------------
 
-float javaVersao = 1.8
-String codificacao = "UTF-8"
+float  javaVersao  = 1.8
+String codificacao = 'UTF-8'
 
 sourceCompatibility = javaVersao
+targetCompatibility = javaVersao
 
 tasks.withType(JavaCompile) {
     options.encoding = codificacao
-}
-
-tasks.withType(GroovyCompile) {
-    options.encoding = codificacao
-    groovyOptions.encoding = codificacao
-}
-
-sourceSets {
-    main.java.srcDirs = ["fonte"]
-    main.resources.srcDirs = ["recurso"]
 }
 
 //------------------------------------------------------
@@ -54,132 +34,128 @@ repositories {
     mavenCentral()
 }
 
+//------------------------------------------------------
+
 dependencies {
-    compile fileTree(dir:"biblioteca", include:["*.jar"])
-    compile "org.codehaus.groovy:groovy:3.0.1"
-    compile "org.codehaus.groovy:groovy-jsr223:3.0.1"
-    compile "io.netty:netty-all:4.1.45.Final"
-    compile "com.joseflavio:urucum:1.0-A15"
-    compile "junit:junit:4.12"
+    implementation fileTree(dir:'lib', include:['*.jar'])
+    implementation "org.codehaus.groovy:groovy:3.0.1"
+    implementation "org.codehaus.groovy:groovy-jsr223:3.0.1"
+    implementation "io.netty:netty-all:4.1.45.Final"
+    api "com.joseflavio:urucum:1.0-A15"
+    testImplementation "junit:junit:4.12"
 }
 
 //------------------------------------------------------
 
 jar {
-
     manifest {
-        attributes "Implementation-Title": nome,
-                   "Implementation-Version": version,
-                   "Class-Path": configurations.compile.collect{ it.getName() }.join(" ")
+        attributes 'Implementation-Title': nome,
+                   'Implementation-Version': archiveVersion,
+                   'Class-Path': configurations.runtimeClasspath.collect{ it.getName() }.join(' ')
+    }
+}
+
+//------------------------------------------------------
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+//------------------------------------------------------
+
+javadoc {
+    if( JavaVersion.current().isJava9Compatible() ){
+        options.addBooleanOption('html5', true)
+    }
+}
+
+//------------------------------------------------------
+
+task copiarDeps(type: Copy) {
+    from configurations.runtimeClasspath
+    into "$buildDir/deps"
+}
+
+//------------------------------------------------------
+
+publishing {
+
+    repositories {
+        maven {
+
+            def releasesURL  = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsURL = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            
+            url = version.endsWith('SNAPSHOT') ? snapshotsURL : releasesURL
+
+            credentials {
+                username = 'xxxxxx'
+                password = 'xxxxxx'
+            }
+
+        }
     }
 
-    exclude "com/joseflavio/copaiba/teste/**"
-    exclude "*.jks"
+    publications {
+        mavenJava(MavenPublication) {
 
-}
+            from components.java
 
-//------------------------------------------------------
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
 
-task jarFonte(type: Jar) {
-    
-    classifier = "sources"
-    from sourceSets.main.allSource
+            pom {
+                
+                name        = nome
+                description = descricao
+                url         = 'http://joseflavio.com/copaiba'
 
-    manifest {
-        attributes "Implementation-Title": nome + " - Codigo Fonte",
-                   "Implementation-Version": version,
-                   "Main-Class": ""
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License, Version 3'
+                        url  = 'http://www.gnu.org/licenses/lgpl.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id    = 'joseflaviojr'
+                        name  = 'José Flávio de Souza Dias Júnior'
+                        email = 'email@joseflavio.com'
+                    }
+                }
+
+                scm {
+                    connection          = 'scm:git:ssh:git@github.com/joseflaviojr/copaiba.git'
+                    developerConnection = 'scm:git:ssh:git@github.com/joseflaviojr/copaiba.git'
+                    url                 = 'https://github.com/joseflaviojr/copaiba.git'
+                }
+
+            }
+        }
+
     }
 
 }
 
 //------------------------------------------------------
-
-task jarDoc(type: Jar) {
-
-    classifier = "javadoc"
-    from javadoc
-
-    javadoc.options.encoding = codificacao
-    javadoc.failOnError = false
-    javadoc.title = nome + " " + version
-    javadoc.options.links = []
-    
-}
-
-//------------------------------------------------------
-
-task jarDep(type: Copy) {
-    into "$buildDir/dependencias"
-    from configurations.compile
-}
-
-build.dependsOn jarDep
-
-//------------------------------------------------------
-
-artifacts {
-    archives jarFonte, jarDoc
-}
 
 signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication( userName: "xxxxxx", password: "xxxxxx" )
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication( userName: "xxxxxx", password: "xxxxxx" )
-      }
-
-      pom.project {
-
-        name nome
-        packaging "jar"
-        description descricao
-        url "http://joseflavio.com/copaiba"
-
-        scm {
-          connection "scm:git:ssh:git@github.com/joseflaviojr/copaiba.git"
-          developerConnection "scm:git:ssh:git@github.com/joseflaviojr/copaiba.git"
-          url "https://github.com/joseflaviojr/copaiba.git"
-        }
-
-        licenses {
-          license {
-            name "GNU Lesser General Public License, Version 3"
-            url "http://www.gnu.org/licenses/lgpl.txt"
-          }
-        }
-
-        developers {
-          developer {
-            id "joseflaviojr"
-            name "José Flávio de Souza Dias Júnior"
-            email "email@joseflavio.com"
-          }
-        }
-
-      }
-
-    }
-  }
+    sign publishing.publications.mavenJava
 }
 
 //------------------------------------------------------
 
 eclipse {
     project {
-        name = archivesBaseName
+        name    = rootProject.name
         comment = descricao
     }
     jdt {
@@ -190,8 +166,8 @@ eclipse {
 
 eclipseJdt {
     doLast {
-        file(".settings/org.eclipse.core.resources.prefs").text =
-            "eclipse.preferences.version=1\nencoding/<project>=" + codificacao
+        file('.settings/org.eclipse.core.resources.prefs').text =
+            'eclipse.preferences.version=1\nencoding/<project>=' + codificacao
     }
 }
 
@@ -199,18 +175,16 @@ eclipseJdt {
 
 idea {
     project {
-        vcs = "Git"
+        languageLevel = new org.gradle.plugins.ide.idea.model.IdeaLanguageLevel(javaVersao)
+        jdkName = '' + javaVersao
+        vcs = 'Git'
         ipr {
             withXml {
-                def projeto = it.asNode()
-                def encoding = projeto.component.find { it.@name == "Encoding" }
-                encoding.appendNode("file", [url: "PROJECT", charset: codificacao])
+                def projeto  = it.asNode()
+                def encoding = projeto.component.find { it.@name == 'Encoding' }
+                encoding.appendNode('file', [url: 'PROJECT', charset: codificacao])
             }
         }
-    }
-    module {
-        languageLevel = new org.gradle.plugins.ide.idea.model.IdeaLanguageLevel(javaVersao)
-        jdkName = "" + javaVersao
     }
 }
 
