@@ -38,10 +38,10 @@ repositories {
 
 dependencies {
     implementation fileTree(dir:'lib', include:['*.jar'])
-    implementation "org.codehaus.groovy:groovy:3.0.1"
-    implementation "org.codehaus.groovy:groovy-jsr223:3.0.1"
-    implementation "io.netty:netty-all:4.1.45.Final"
-    api "com.joseflavio:urucum:1.0-A15"
+    implementation "org.codehaus.groovy:groovy:3.0.7"
+    implementation "org.codehaus.groovy:groovy-jsr223:3.0.7"
+    implementation "io.netty:netty-all:4.1.59.Final"
+    api "com.joseflavio:urucum:1.0-A16"
     testImplementation "junit:junit:4.12"
 }
 
