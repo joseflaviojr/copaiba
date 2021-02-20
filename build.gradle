@@ -14,7 +14,7 @@ String nome      = 'Copaiba'
 String descricao = 'Programação em tempo de execução remota.'
 
 group   = 'com.joseflavio'
-version = '1.0-A16'
+version = '1.0-A17'
 
 //------------------------------------------------------
 
