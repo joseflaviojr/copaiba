@@ -24,7 +24,7 @@ A Copaíba está disponível como biblioteca Java no repositório [Maven](http:/
 
 Gradle:
 
-```
+```groovy
 implementation 'com.joseflavio:copaiba:1.0-A17'
 ```
 
